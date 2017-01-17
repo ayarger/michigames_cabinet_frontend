@@ -212,16 +212,39 @@ public class GameManager : MonoBehaviour {
     }
         
     void ProcessGrid () {
-        if (Input.GetKeyDown (KeyCode.RightArrow))
-            MoveCursor (1, 0);
-        else if (Input.GetKeyDown (KeyCode.LeftArrow))
-            MoveCursor (-1, 0);
-        else if (Input.GetKeyDown (KeyCode.UpArrow))
-            MoveCursor (0, 1);
-        else if (Input.GetKeyDown (KeyCode.DownArrow))
-            MoveCursor (0, -1);
+        Vector2 movement = Vector2.zero;
+        InputManager.ActiveDevice.LeftStick.LowerDeadZone = 0.25f;
 
-        if (Input.GetKeyDown (KeyCode.Return))
+        // Keyboard
+        if (Input.GetKeyDown (KeyCode.RightArrow))
+            movement = new Vector2 (1, 0);
+        else if (Input.GetKeyDown (KeyCode.LeftArrow))
+            movement = new Vector2 (-1, 0);
+        else if (Input.GetKeyDown (KeyCode.UpArrow))
+            movement = new Vector2 (0, 1);
+        else if (Input.GetKeyDown (KeyCode.DownArrow))
+            movement = new Vector2 (0, -1);
+
+        // Controllers
+        float last_horizontal_value = Mathf.Abs(InputManager.ActiveDevice.Direction.LastValue.x);
+        float last_vertical_value = Mathf.Abs(InputManager.ActiveDevice.Direction.LastValue.y);
+
+        if (InputManager.ActiveDevice.Direction.Value.x >= 0.5f && last_horizontal_value < 0.5f)
+            movement = new Vector2(1, 0);
+        else if (InputManager.ActiveDevice.Direction.Value.x <= -0.5f && last_horizontal_value < 0.5f)
+            movement = new Vector2(-1, 0);
+        else if (InputManager.ActiveDevice.Direction.Value.y >= 0.5f && last_vertical_value < 0.5f)
+            movement = new Vector2(0, 1);
+        else if (InputManager.ActiveDevice.Direction.Value.y <= -0.5f && last_vertical_value < 0.5f)
+            movement = new Vector2(0, -1);
+
+        print(InputManager.ActiveDevice.Direction.LastValue.ToString());
+        
+        // Apply Movement
+        MoveCursor((int)movement.x, (int)movement.y);
+
+        // Return
+        if (Input.GetKeyDown(KeyCode.Return) || InputManager.ActiveDevice.Action1.WasPressed)
             _state = SelectorState.CONFIRM;
     }
 
@@ -266,6 +289,9 @@ public class GameManager : MonoBehaviour {
     }
 
     public void MoveCursor(int x, int y) {
+        if (x == 0 && y == 0)
+            return;
+
         AudioSource.PlayClipAtPoint (boop, transform.position);
 
         if (current_cursor.x + x >= cells [(int)current_cursor.y].Count)
