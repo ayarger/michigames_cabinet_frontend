@@ -10,47 +10,50 @@ public class PreviewPanel : MonoBehaviour {
 	GameInfo current_game_info;
 
 	float screenshot_slideshow_duration = 4.0f;
-	float timer;
+	float screenshot_slideshow_previous_time;
 	int current_screenshot_index = 0;
 
 	void Start () {
 		instance = this;
 		raw_image = GetComponent<RawImage> ();
-		timer = screenshot_slideshow_duration;
+        screenshot_slideshow_previous_time = Time.time;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+        if (current_game_info == null)
+            return;
+
 		if (IsTrailerAvailable())
 			return;
 
-		if (timer < 0.5f) {
-			float progress = timer / 0.5f;
-			//raw_image.color = Color.Lerp (raw_image.color, Color.black, progress);
-		}
-
 		// Screenshots
-		timer -= Time.deltaTime;
-		if (timer <= 0.0f) {
-			timer = screenshot_slideshow_duration;
+		
+		if (Time.time - screenshot_slideshow_previous_time >= screenshot_slideshow_duration) {
+            screenshot_slideshow_previous_time = Time.time;
 			if (current_game_info.screenshots.Count > 0) {
-				current_screenshot_index = ++current_screenshot_index % current_game_info.screenshots.Count;
+				current_screenshot_index = (++current_screenshot_index) % current_game_info.screenshots.Count;
 			}
 			RefreshScreenshot ();
 		}
 	}
 
 	void RefreshScreenshot() {
+        print("REFRESH: " + current_screenshot_index.ToString() + " COUNT: " + current_game_info.screenshots.Count.ToString());
+        foreach (Texture2D t in current_game_info.screenshots)
+            print(t.ToString());
+
 		if (current_game_info.screenshots.Count > current_screenshot_index)
 			raw_image.texture = current_game_info.screenshots [current_screenshot_index];
 		raw_image.color = new Color (raw_image.color.r, raw_image.color.g, raw_image.color.b, 1.0f);
 	}
 
 	public static void SetGameInfo(GameInfo gi) {
-		// Screenshots
-		instance.current_game_info = gi;
+        
+        // Screenshots
+        instance.current_game_info = gi;
 		instance.current_screenshot_index = 0;
-		instance.timer = instance.screenshot_slideshow_duration;
+        instance.screenshot_slideshow_previous_time = Time.time;
 		instance.RefreshScreenshot ();
 
 		// Trailer

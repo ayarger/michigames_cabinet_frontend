@@ -57,14 +57,14 @@ public class ObjectIcon : MonoBehaviour {
 				my_renderer.sortingOrder = ++top_most_sorting_level;
 
 			was_selected_last_frame = true;
-			transform.localScale += (Vector3.one * 2.0f - transform.localScale) * 0.1f;
-			my_renderer.color = new Color (my_renderer.color.r, my_renderer.color.g, my_renderer.color.b, 1.0f);
+			transform.localScale += (Vector3.one * (1.75f + Mathf.Abs(Mathf.Sin(Time.time * 5.0f) * 0.1f)) - transform.localScale) * 0.2f;
+			//my_renderer.color = new Color (my_renderer.color.r, my_renderer.color.g, my_renderer.color.b, 1.0f);
 			transform.SetAsFirstSibling ();
 			selected_icon = this;
 		} else {
 			was_selected_last_frame = false;
-			transform.localScale += (Vector3.one - transform.localScale) * 0.1f;
-			my_renderer.color = new Color (my_renderer.color.r, my_renderer.color.g, my_renderer.color.b, 0.3f);
+			transform.localScale += (Vector3.one - transform.localScale) * 0.2f;
+			//my_renderer.color = new Color (my_renderer.color.r, my_renderer.color.g, my_renderer.color.b, 0.3f);
 		}
 	}
 
@@ -89,7 +89,7 @@ public class ObjectIcon : MonoBehaviour {
 	}
 
 	void NormalMovement() {
-		transform.position = _cell_info.initial_desired_position + Vector3.up * Mathf.Sin (Time.time * 2 + _cell_info.initial_desired_position.x) * 0.1f;
+        transform.position = _cell_info.initial_desired_position; //+ Vector3.up * Mathf.Sin (Time.time * 2 + _cell_info.initial_desired_position.x) * 0.1f;
 	}
 
 	void ConfirmMovement() {
