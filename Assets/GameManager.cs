@@ -57,12 +57,25 @@ public class GameManager : MonoBehaviour {
     public Sprite eecs_494_sprite;
     public Sprite wsoft_sprite;
 
+	public Image LaunchPanel;
+	public Text LaunchText1;
+	public Text LaunchText2;
+
+	public Image TransitionPanel;
+
     Vector2 current_cursor = Vector2.zero;
 
     public GameObject object_icon_prefab;
 
     void Init() {
-        string[] game_paths = Directory.GetDirectories ("./michigames_games_repo");
+		string[] game_paths;
+		try {
+        	game_paths = Directory.GetDirectories ("./michigames_games_repo");
+		} catch(Exception e) {
+			ErrorUI.ShowMessage ("Failed to locate games directory");
+			return;
+		}
+			
         foreach (string s in game_paths) {
             AddGame (s);
         }
@@ -202,8 +215,6 @@ public class GameManager : MonoBehaviour {
             //ProcessIdling ();
 
         var inputDevice = InputManager.ActiveDevice;
-        if(inputDevice.Action1.IsPressed)
-            print (Time.time);
     }
 
     void EnforceResolution()
@@ -214,6 +225,8 @@ public class GameManager : MonoBehaviour {
     void ProcessGrid () {
         Vector2 movement = Vector2.zero;
         InputManager.ActiveDevice.LeftStick.LowerDeadZone = 0.25f;
+
+		TransitionPanel.gameObject.SetActive (false);
 
         // Keyboard
         if (Input.GetKeyDown (KeyCode.RightArrow))
@@ -237,15 +250,23 @@ public class GameManager : MonoBehaviour {
             movement = new Vector2(0, 1);
         else if (InputManager.ActiveDevice.Direction.Value.y <= -0.5f && last_vertical_value < 0.5f)
             movement = new Vector2(0, -1);
-
-        print(InputManager.ActiveDevice.Direction.LastValue.ToString());
         
         // Apply Movement
         MoveCursor((int)movement.x, (int)movement.y);
 
         // Return
-        if (Input.GetKeyDown(KeyCode.Return) || InputManager.ActiveDevice.Action1.WasPressed)
-            _state = SelectorState.CONFIRM;
+		if (Input.GetKeyDown (KeyCode.Return) || InputManager.ActiveDevice.Action1.WasPressed) {
+			SelectableCell cell = cells [(int)current_cursor.y] [(int)current_cursor.x];
+			if (cell.game_info.game_title == "Credits")
+				return;
+			_state = SelectorState.CONFIRM;
+			LaunchPanel.gameObject.SetActive (true);
+			if(cell.game_info.semester_or_event_code.Length == 3)
+				LaunchText1.text = "This game was created in EECS 494.";
+			else 
+				LaunchText1.text = "This game was created at a Wolverine Soft Game Jam in 48 Hours.";
+			LaunchText2.text = "Play \"" + cell.game_info.game_title + "\"?";
+		}
     }
 
     public static bool IsGameRunning () {
@@ -253,10 +274,13 @@ public class GameManager : MonoBehaviour {
     }
 
     void ProcessConfirm () {
-        if (Input.GetKeyDown (KeyCode.Return)) {
+		if (Input.GetKeyDown (KeyCode.Return) || InputManager.ActiveDevice.Action1.WasPressed) {
             _state = SelectorState.TRANSITION;
-        } else if (Input.GetKeyDown (KeyCode.Backspace)) {
+			LaunchPanel.gameObject.SetActive (false);
+			TransitionPanel.gameObject.SetActive (true);
+		} else if (Input.GetKeyDown (KeyCode.Backspace) || InputManager.ActiveDevice.Action2.WasPressed) {
             _state = SelectorState.GRID;
+			LaunchPanel.gameObject.SetActive (false);
         }
     }
 
@@ -269,7 +293,7 @@ public class GameManager : MonoBehaviour {
                 _state = SelectorState.IDLING;
             }
         } else {
-            transition_progress += 0.01f;
+			transition_progress += 0.01f * Time.deltaTime * 50;
         }
     }
 
@@ -284,8 +308,8 @@ public class GameManager : MonoBehaviour {
 
     void ReturnToSelector(object sender, EventArgs e) {
         print ("RETURNING TO SELECTOR!");
-        _state = SelectorState.GRID;
-        transition_progress = 0.0f;
+		_state = SelectorState.GRID;
+		transition_progress = 0.0f;
     }
 
     public void MoveCursor(int x, int y) {

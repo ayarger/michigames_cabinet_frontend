@@ -80,6 +80,9 @@ public class CartoonySceneTransitionView : TransitionView {
 	}
 
 	void OnRenderImage(RenderTexture source, RenderTexture destination) {
+		if (mat == null)
+			return;
+		
 		mat.SetFloat ("_bwBlend", intensity);
 		mat.SetFloat ("_weird", weird);
 		mat.SetTexture ("_SymbolTex", symbol_tex);
