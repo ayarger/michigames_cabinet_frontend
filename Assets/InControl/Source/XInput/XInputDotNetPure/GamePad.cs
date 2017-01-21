@@ -1,11 +1,11 @@
 ﻿#if UNITY_STANDALONE_WIN || UNITY_EDITOR
-using System;
-using System.Runtime.InteropServices;
-using UnityEngine;
-
-
 namespace XInputDotNetPure
 {
+	using System;
+	using System.Runtime.InteropServices;
+	using UnityEngine;
+
+
 	class Imports
 	{
 		[DllImport( "XInputInterface32", EntryPoint = "XInputGamePadGetState" )]
@@ -389,9 +389,9 @@ namespace XInputDotNetPure
 	{
 		public static GamePadState GetState( PlayerIndex playerIndex )
 		{
-			IntPtr gamePadStatePointer = Marshal.AllocHGlobal( Marshal.SizeOf( typeof(GamePadState.RawState) ) );
-			uint result = Imports.XInputGamePadGetState( (uint) playerIndex, gamePadStatePointer );
-			GamePadState.RawState state = (GamePadState.RawState) Marshal.PtrToStructure( gamePadStatePointer, typeof(GamePadState.RawState) );
+			var gamePadStatePointer = Marshal.AllocHGlobal( Marshal.SizeOf( typeof(GamePadState.RawState) ) );
+			var result = Imports.XInputGamePadGetState( (uint) playerIndex, gamePadStatePointer );
+			var state = (GamePadState.RawState) Marshal.PtrToStructure( gamePadStatePointer, typeof(GamePadState.RawState) );
 			return new GamePadState( result == 0, state );
 		}
 

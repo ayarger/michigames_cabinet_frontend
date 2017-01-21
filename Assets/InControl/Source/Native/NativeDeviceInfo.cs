@@ -1,9 +1,9 @@
-﻿using System;
-using System.Runtime.InteropServices;
-
-
-namespace InControl
+﻿namespace InControl
 {
+	using System;
+	using System.Runtime.InteropServices;
+
+
 	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
 	public struct NativeDeviceInfo
 	{

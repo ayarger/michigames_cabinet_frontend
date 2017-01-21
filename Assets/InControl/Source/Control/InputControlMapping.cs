@@ -1,8 +1,8 @@
-using System;
-using UnityEngine;
-
 namespace InControl
 {
+	using UnityEngine;
+
+
 	public class InputControlMapping
 	{
 		// [TinyJSON.TypeHint]

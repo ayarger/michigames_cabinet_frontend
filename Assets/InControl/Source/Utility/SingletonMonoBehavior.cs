@@ -1,10 +1,13 @@
-﻿using System;
-using System.Reflection;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using System;
+	using UnityEngine;
+
+#if NETFX_CORE
+	using System.Reflection;
+#endif
+
+
 	[AttributeUsage( AttributeTargets.Class, Inherited = true )]
 	public class SingletonPrefabAttribute : Attribute
 	{
@@ -84,7 +87,7 @@ namespace InControl
 					if (objects.Length > 1)
 					{
 						Debug.LogWarning( "Multiple instances of singleton " + type + " found; destroying all but the first." );
-						for (int i = 1; i < objects.Length; i++)
+						for (var i = 1; i < objects.Length; i++)
 						{
 							DestroyImmediate( objects[i].gameObject );
 						}
@@ -138,7 +141,7 @@ namespace InControl
 				if (hasInstance)
 				{
 					var objects = FindObjectsOfType<T>();
-					for (int i = 0; i < objects.Length; i++)
+					for (var i = 0; i < objects.Length; i++)
 					{
 						if (objects[i].GetInstanceID() != instance.GetInstanceID())
 						{

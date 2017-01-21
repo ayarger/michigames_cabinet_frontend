@@ -1,12 +1,10 @@
 #if UNITY_EDITOR
-using System;
-using UnityEditor;
-using UnityEngine;
-using System.Collections.Generic;
-
-
 namespace InControl
 {
+	using UnityEditor;
+	using UnityEngine;
+
+
 	internal class InControlBuilder
 	{
 		[MenuItem( "GameObject/Create Other/InControl/Manager", false, 1 )]

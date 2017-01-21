@@ -1,10 +1,4 @@
 ﻿#if UNITY_IOS || UNITY_EDITOR
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-
 namespace InControl
 {
 	public class ICadeDevice : InputDevice

@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using UnityEngine;
-
-
-namespace InControl
+﻿namespace InControl
 {
 	public enum InputRangeType : int
 	{

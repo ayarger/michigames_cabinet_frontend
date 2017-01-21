@@ -1,13 +1,9 @@
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using XInputDotNetPure;
-
-
 namespace InControl
 {
+	using XInputDotNetPure;
+
+
 	public class XInputDevice : InputDevice
 	{
 		const float LowerDeadZone = 0.2f;

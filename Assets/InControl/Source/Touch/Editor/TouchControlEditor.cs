@@ -1,11 +1,10 @@
 ﻿#if UNITY_EDITOR
-using System.IO;
-using UnityEditor;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using UnityEditor;
+	using UnityEngine;
+
+
 	public class TouchControlEditor : Editor
 	{
 		protected Texture headerTexture;

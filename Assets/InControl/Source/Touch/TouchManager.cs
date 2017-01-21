@@ -1,17 +1,15 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using System;
+	using System.Collections;
+	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
+	using UnityEngine;
+
+
 	[ExecuteInEditMode]
 	public class TouchManager : SingletonMonoBehavior<TouchManager, InControlManager>
 	{
-		const int MaxTouches = 16;
-
 		public enum GizmoShowOption
 		{
 			Never,
@@ -38,6 +36,7 @@ namespace InControl
 		public static event Action OnSetup;
 
 		InputDevice device;
+
 		Vector3 viewSize;
 		Vector2 screenSize;
 		Vector2 halfScreenSize;
@@ -45,10 +44,13 @@ namespace InControl
 		float halfPercentToWorld;
 		float pixelToWorld;
 		float halfPixelToWorld;
+
 		TouchControl[] touchControls;
-		Touch[] cachedTouches;
+
+		TouchPool cachedTouches;
 		List<Touch> activeTouches;
 		ReadOnlyCollection<Touch> readOnlyActiveTouches;
+
 		Vector2 lastMousePosition;
 		bool isReady;
 
@@ -205,21 +207,21 @@ namespace InControl
 			device.AddControl( InputControlType.RightStickUp, "RightStickUp" );
 			device.AddControl( InputControlType.RightStickDown, "RightStickDown" );
 
-			device.AddControl( InputControlType.LeftTrigger, "LeftTrigger" );
-			device.AddControl( InputControlType.RightTrigger, "RightTrigger" );
-
 			device.AddControl( InputControlType.DPadUp, "DPadUp" );
 			device.AddControl( InputControlType.DPadDown, "DPadDown" );
 			device.AddControl( InputControlType.DPadLeft, "DPadLeft" );
 			device.AddControl( InputControlType.DPadRight, "DPadRight" );
 
-			device.AddControl( InputControlType.Action1, "Action1" );
-			device.AddControl( InputControlType.Action2, "Action2" );
-			device.AddControl( InputControlType.Action3, "Action3" );
-			device.AddControl( InputControlType.Action4, "Action4" );
+			device.AddControl( InputControlType.LeftTrigger, "LeftTrigger" );
+			device.AddControl( InputControlType.RightTrigger, "RightTrigger" );
 
 			device.AddControl( InputControlType.LeftBumper, "LeftBumper" );
 			device.AddControl( InputControlType.RightBumper, "RightBumper" );
+
+			for (var control = InputControlType.Action1; control <= InputControlType.Action4; control++)
+			{
+				device.AddControl( control, control.ToString() );
+			}
 
 			device.AddControl( InputControlType.Menu, "Menu" );
 
@@ -248,7 +250,7 @@ namespace InControl
 		void SubmitControlStates( ulong updateTick, float deltaTime )
 		{
 			var touchControlCount = touchControls.Length;
-			for (int i = 0; i < touchControlCount; i++)
+			for (var i = 0; i < touchControlCount; i++)
 			{
 				var touchControl = touchControls[i];
 				if (touchControl.enabled && touchControl.gameObject.activeInHierarchy)
@@ -262,7 +264,7 @@ namespace InControl
 		void CommitControlStates( ulong updateTick, float deltaTime )
 		{
 			var touchControlCount = touchControls.Length;
-			for (int i = 0; i < touchControlCount; i++)
+			for (var i = 0; i < touchControlCount; i++)
 			{
 				var touchControl = touchControls[i];
 				if (touchControl.enabled && touchControl.gameObject.activeInHierarchy)
@@ -291,7 +293,7 @@ namespace InControl
 			if (touchControls != null)
 			{
 				var touchControlCount = touchControls.Length;
-				for (int i = 0; i < touchControlCount; i++)
+				for (var i = 0; i < touchControlCount; i++)
 				{
 					touchControls[i].ConfigureControl();
 				}
@@ -301,13 +303,12 @@ namespace InControl
 
 		void CreateTouches()
 		{
-			cachedTouches = new Touch[MaxTouches];
-			for (int i = 0; i < MaxTouches; i++)
-			{
-				cachedTouches[i] = new Touch( i );
-			}
-			mouseTouch = cachedTouches[MaxTouches - 1];
-			activeTouches = new List<Touch>( MaxTouches );
+			cachedTouches = new TouchPool();
+
+			mouseTouch = new Touch();
+			mouseTouch.fingerId = Touch.FingerID_Mouse;
+
+			activeTouches = new List<Touch>( 32 );
 			readOnlyActiveTouches = new ReadOnlyCollection<Touch>( activeTouches );
 		}
 
@@ -315,6 +316,7 @@ namespace InControl
 		void UpdateTouches( ulong updateTick, float deltaTime )
 		{
 			activeTouches.Clear();
+			cachedTouches.FreeEndedTouches();
 
 #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WEBGL || UNITY_WSA
 			if (mouseTouch.SetWithMouseData( updateTick, deltaTime ))
@@ -323,18 +325,19 @@ namespace InControl
 			}
 #endif
 
-			for (int i = 0; i < Input.touchCount; i++)
+			for (var i = 0; i < Input.touchCount; i++)
 			{
 				var unityTouch = Input.GetTouch( i );
-				var cacheTouch = cachedTouches[unityTouch.fingerId];
+				var cacheTouch = cachedTouches.FindOrCreateTouch( unityTouch.fingerId );
 				cacheTouch.SetWithTouchData( unityTouch, updateTick, deltaTime );
 				activeTouches.Add( cacheTouch );
 			}
 
 			// Find any touches that Unity may have "forgotten" to end properly.
-			for (int i = 0; i < MaxTouches; i++)
+			var touchCount = cachedTouches.Touches.Count;
+			for (var i = 0; i < touchCount; i++)
 			{
-				var touch = cachedTouches[i];
+				var touch = cachedTouches.Touches[i];
 				if (touch.phase != TouchPhase.Ended && touch.updateTick != updateTick)
 				{
 					touch.phase = TouchPhase.Ended;
@@ -349,7 +352,7 @@ namespace InControl
 		void SendTouchBegan( Touch touch )
 		{
 			var touchControlCount = touchControls.Length;
-			for (int i = 0; i < touchControlCount; i++)
+			for (var i = 0; i < touchControlCount; i++)
 			{
 				var touchControl = touchControls[i];
 				if (touchControl.enabled && touchControl.gameObject.activeInHierarchy)
@@ -363,7 +366,7 @@ namespace InControl
 		void SendTouchMoved( Touch touch )
 		{
 			var touchControlCount = touchControls.Length;
-			for (int i = 0; i < touchControlCount; i++)
+			for (var i = 0; i < touchControlCount; i++)
 			{
 				var touchControl = touchControls[i];
 				if (touchControl.enabled && touchControl.gameObject.activeInHierarchy)
@@ -377,7 +380,7 @@ namespace InControl
 		void SendTouchEnded( Touch touch )
 		{
 			var touchControlCount = touchControls.Length;
-			for (int i = 0; i < touchControlCount; i++)
+			for (var i = 0; i < touchControlCount; i++)
 			{
 				var touchControl = touchControls[i];
 				if (touchControl.enabled && touchControl.gameObject.activeInHierarchy)
@@ -401,7 +404,7 @@ namespace InControl
 				}
 			}
 
-			for (int i = 0; i < touchCount; i++)
+			for (var i = 0; i < touchCount; i++)
 			{
 				var touch = activeTouches[i];
 				switch (touch.phase)
@@ -503,7 +506,7 @@ namespace InControl
 				if (_controlsEnabled != value)
 				{
 					var touchControlCount = touchControls.Length;
-					for (int i = 0; i < touchControlCount; i++)
+					for (var i = 0; i < touchControlCount; i++)
 					{
 						touchControls[i].enabled = value;
 					}
@@ -542,7 +545,7 @@ namespace InControl
 
 		public static Touch GetTouchByFingerId( int fingerId )
 		{
-			return Instance.cachedTouches[fingerId];
+			return Instance.cachedTouches.FindTouch( fingerId );
 		}
 
 

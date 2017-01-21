@@ -1,10 +1,8 @@
-using System;
-using UnityEngine;
-using InControl;
-
-
 namespace InterfaceMovement
 {
+	using UnityEngine;
+
+
 	public class Button : MonoBehaviour
 	{
 		Renderer cachedRenderer;
@@ -24,7 +22,7 @@ namespace InterfaceMovement
 		void Update()
 		{
 			// Find out if we're the focused button.
-			bool hasFocus = transform.parent.GetComponent<ButtonManager>().focusedButton == this;
+			var hasFocus = transform.parent.GetComponent<ButtonManager>().focusedButton == this;
 
 			// Fade alpha in and out depending on focus.
 			var color = cachedRenderer.material.color;

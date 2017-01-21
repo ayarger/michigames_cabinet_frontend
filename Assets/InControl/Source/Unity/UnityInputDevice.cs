@@ -1,11 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using UnityEngine;
+
+
 	public class UnityInputDevice : InputDevice
 	{
 		static string[,] analogQueries;
@@ -53,7 +50,7 @@ namespace InControl
 				Meta = profile.Meta;
 
 				var analogMappingCount = profile.AnalogCount;
-				for (int i = 0; i < analogMappingCount; i++)
+				for (var i = 0; i < analogMappingCount; i++)
 				{
 					var analogMapping = profile.AnalogMappings[i];
 					if (Utility.TargetIsAlias( analogMapping.Target ))
@@ -72,7 +69,7 @@ namespace InControl
 				}
 
 				var buttonMappingCount = profile.ButtonCount;
-				for (int i = 0; i < buttonMappingCount; i++)
+				for (var i = 0; i < buttonMappingCount; i++)
 				{
 					var buttonMapping = profile.ButtonMappings[i];
 					if (Utility.TargetIsAlias( buttonMapping.Target ))
@@ -91,12 +88,12 @@ namespace InControl
 				Name = "Unknown Device";
 				Meta = "\"" + joystickName + "\"";
 
-				for (int i = 0; i < NumUnknownButtons; i++)
+				for (var i = 0; i < NumUnknownButtons; i++)
 				{
 					AddControl( InputControlType.Button0 + i, "Button " + i );
 				}
 
-				for (int i = 0; i < NumUnknownAnalogs; i++)
+				for (var i = 0; i < NumUnknownAnalogs; i++)
 				{
 					AddControl( InputControlType.Analog0 + i, "Analog " + i, 0.2f, 0.9f );
 				}
@@ -109,7 +106,7 @@ namespace InControl
 			if (IsKnown)
 			{
 				var analogMappingCount = profile.AnalogCount;
-				for (int i = 0; i < analogMappingCount; i++)
+				for (var i = 0; i < analogMappingCount; i++)
 				{
 					var analogMapping = profile.AnalogMappings[i];
 					var analogValue = analogMapping.Source.GetValue( this );
@@ -123,7 +120,7 @@ namespace InControl
 				}
 
 				var buttonMappingCount = profile.ButtonCount;
-				for (int i = 0; i < buttonMappingCount; i++)
+				for (var i = 0; i < buttonMappingCount; i++)
 				{
 					var buttonMapping = profile.ButtonMappings[i];
 					var buttonState = buttonMapping.Source.GetState( this );
@@ -133,12 +130,12 @@ namespace InControl
 			}
 			else
 			{
-				for (int i = 0; i < NumUnknownButtons; i++)
+				for (var i = 0; i < NumUnknownButtons; i++)
 				{
 					UpdateWithState( InputControlType.Button0 + i, ReadRawButtonState( i ), updateTick, deltaTime );
 				}
 
-				for (int i = 0; i < NumUnknownAnalogs; i++)
+				for (var i = 0; i < NumUnknownAnalogs; i++)
 				{
 					UpdateWithValue( InputControlType.Analog0 + i, ReadRawAnalogValue( i ), updateTick, deltaTime );
 				}
@@ -152,9 +149,9 @@ namespace InControl
 			{
 				analogQueries = new string[ MaxDevices, MaxAnalogs ];
 
-				for (int joystickId = 1; joystickId <= MaxDevices; joystickId++)
+				for (var joystickId = 1; joystickId <= MaxDevices; joystickId++)
 				{
-					for (int analogId = 0; analogId < MaxAnalogs; analogId++)
+					for (var analogId = 0; analogId < MaxAnalogs; analogId++)
 					{
 						analogQueries[joystickId - 1, analogId] = "joystick " + joystickId + " analog " + analogId;
 					}
@@ -169,9 +166,9 @@ namespace InControl
 			{
 				buttonQueries = new string[ MaxDevices, MaxButtons ];
 
-				for (int joystickId = 1; joystickId <= MaxDevices; joystickId++)
+				for (var joystickId = 1; joystickId <= MaxDevices; joystickId++)
 				{
-					for (int buttonId = 0; buttonId < MaxButtons; buttonId++)
+					for (var buttonId = 0; buttonId < MaxButtons; buttonId++)
 					{
 						buttonQueries[joystickId - 1, buttonId] = "joystick " + joystickId + " button " + buttonId;
 					}

@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 #if UNITY_EDITOR
-using UnityEngine;
-using System.Collections.Generic;
-
-
 namespace InControl.ReorderableList
 {
+	using UnityEngine;
+	using System.Collections.Generic;
+
+
 	/// <summary>
 	/// Reorderable list adaptor for generic list.
 	/// </summary>
@@ -44,7 +44,7 @@ namespace InControl.ReorderableList
 		/// <returns>
 		/// The element.
 		/// </returns>
-		public T this[ int index ]
+		public T this[int index]
 		{
 			get { return _list[index]; }
 		}
@@ -88,12 +88,12 @@ namespace InControl.ReorderableList
 		/// <inheritdoc/>
 		public void Add()
 		{
-			_list.Add( default(T) );
+			_list.Add( default( T ) );
 		}
 		/// <inheritdoc/>
 		public void Insert( int index )
 		{
-			_list.Insert( index, default(T) );
+			_list.Insert( index, default( T ) );
 		}
 		/// <inheritdoc/>
 		public void Duplicate( int index )

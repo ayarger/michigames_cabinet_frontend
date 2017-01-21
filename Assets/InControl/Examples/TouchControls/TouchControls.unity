@@ -100,7 +100,7 @@ GameObject:
   - 4: {fileID: 203172303}
   - 114: {fileID: 203172302}
   m_Layer: 5
-  m_Name: TouchButtonControlA
+  m_Name: Touch Button Control A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -141,7 +141,7 @@ MonoBehaviour:
     sizeUnitType: 0
     size: {x: 15, y: 15}
     lockAspectRatio: 1
-    worldSize: {x: 1.4797069, y: 1.4797069}
+    worldSize: {x: 1.4999999, y: 1.4999999}
 --- !u!4 &203172303
 Transform:
   m_ObjectHideFlags: 0
@@ -149,7 +149,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 203172301}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.460541, y: -3.8162346, z: 0}
+  m_LocalPosition: {x: 3.0186026, y: -3.8000002, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -243,7 +243,7 @@ GameObject:
   - 4: {fileID: 674590781}
   - 114: {fileID: 674590782}
   m_Layer: 5
-  m_Name: TouchStickControl
+  m_Name: Touch Stick Control
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -256,7 +256,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 674590780}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.9537768, y: -3.0270576, z: 0}
+  m_LocalPosition: {x: -3.5186024, y: -3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -291,17 +291,18 @@ MonoBehaviour:
     m_Curve:
     - time: 0
       value: 0
-      inSlope: 0
+      inSlope: 1
       outSlope: 1
-      tangentMode: 0
+      tangentMode: 10
     - time: 1
       value: 1
       inSlope: 1
-      outSlope: 0
-      tangentMode: 0
+      outSlope: 1
+      tangentMode: 10
     m_PreInfinity: 2
     m_PostInfinity: 2
   allowDragging: 0
+  allowDraggingAxis: 0
   snapToInitialTouch: 1
   resetWhenDone: 1
   resetDuration: 0.1
@@ -322,7 +323,7 @@ MonoBehaviour:
     sizeUnitType: 0
     size: {x: 20, y: 20}
     lockAspectRatio: 1
-    worldSize: {x: 1.9729425, y: 1.9729425}
+    worldSize: {x: 1.9999999, y: 1.9999999}
   knob:
     idleSprite: {fileID: 21300000, guid: 54a1d28b302b6484d8633cc09baf1238, type: 3}
     busySprite: {fileID: 21300000, guid: 54a1d28b302b6484d8633cc09baf1238, type: 3}
@@ -340,7 +341,7 @@ MonoBehaviour:
     sizeUnitType: 0
     size: {x: 10, y: 10}
     lockAspectRatio: 1
-    worldSize: {x: 0.98647124, y: 0.98647124}
+    worldSize: {x: 0.99999994, y: 0.99999994}
   knobRange: 7.5
 --- !u!1 &730375495
 GameObject:
@@ -352,7 +353,7 @@ GameObject:
   - 4: {fileID: 730375496}
   - 114: {fileID: 730375497}
   m_Layer: 5
-  m_Name: TouchButtonControlB
+  m_Name: Touch Button Control B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -365,7 +366,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 730375495}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.7429538, y: -2.5338218, z: 0}
+  m_LocalPosition: {x: 4.3186026, y: -2.5000002, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -406,7 +407,7 @@ MonoBehaviour:
     sizeUnitType: 0
     size: {x: 15, y: 15}
     lockAspectRatio: 1
-    worldSize: {x: 1.4797069, y: 1.4797069}
+    worldSize: {x: 1.4999999, y: 1.4999999}
 --- !u!1 &759222509
 GameObject:
   m_ObjectHideFlags: 0
@@ -417,7 +418,7 @@ GameObject:
   - 4: {fileID: 759222511}
   - 20: {fileID: 759222510}
   m_Layer: 0
-  m_Name: TouchCamera
+  m_Name: Touch Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -470,6 +471,57 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1364669223}
   m_RootOrder: 0
+--- !u!1 &1091272317
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1091272318}
+  - 114: {fileID: 1091272319}
+  m_Layer: 5
+  m_Name: Touch Track Control
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1091272318
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1091272317}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 1364669223}
+  m_RootOrder: 5
+--- !u!114 &1091272319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1091272317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5414a42a055b6449282453561a90c671, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  areaUnitType: 0
+  activeArea:
+    x: 25
+    y: 25
+    width: 50
+    height: 50
+  target: 1
+  scale: 1
+  tapTarget: 22
+  maxTapDuration: 0.5
+  maxTapMovement: 0.1
 --- !u!1 &1207906908
 GameObject:
   m_ObjectHideFlags: 0
@@ -594,6 +646,7 @@ Transform:
   - {fileID: 203172303}
   - {fileID: 730375496}
   - {fileID: 1368722450}
+  - {fileID: 1091272318}
   m_Father: {fileID: 0}
   m_RootOrder: 2
 --- !u!114 &1364669224
@@ -622,7 +675,7 @@ GameObject:
   - 4: {fileID: 1368722450}
   - 114: {fileID: 1368722451}
   m_Layer: 5
-  m_Name: TouchButtonControlR
+  m_Name: Touch Button Control R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -635,7 +688,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1368722449}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.460541, y: 0, z: 0}
+  m_LocalPosition: {x: 2.7593012, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -676,7 +729,7 @@ MonoBehaviour:
     sizeUnitType: 0
     size: {x: 50, y: 100}
     lockAspectRatio: 0
-    worldSize: {x: 4.9323564, y: 9.999999}
+    worldSize: {x: 5.5186024, y: 9.999999}
 --- !u!1 &1711878204
 GameObject:
   m_ObjectHideFlags: 0

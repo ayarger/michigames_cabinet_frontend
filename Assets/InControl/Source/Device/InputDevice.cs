@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using System;
+	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
+	using UnityEngine;
+
+
 	public class InputDevice
 	{
 		public static readonly InputDevice Null = new InputDevice( "None" );
@@ -108,7 +108,12 @@ namespace InControl
 				AddControl( InputControlType.RightStickY, "Right Stick Y" );
 				AddControl( InputControlType.DPadX, "DPad X" );
 				AddControl( InputControlType.DPadY, "DPad Y" );
+
+#if UNITY_PS4
+				AddControl( InputControlType.Command, "OPTIONS button" );
+#else
 				AddControl( InputControlType.Command, "Command" );
+#endif
 
 				ExpireControlCache();
 			}
@@ -228,7 +233,7 @@ namespace InControl
 			DPad.ClearInputState();
 
 			var controlsCount = Controls.Count;
-			for (int i = 0; i < controlsCount; i++)
+			for (var i = 0; i < controlsCount; i++)
 			{
 				var control = Controls[i];
 				if (control != null)
@@ -349,7 +354,7 @@ namespace InControl
 
 		bool AnyCommandControlIsPressed()
 		{
-			for (int i = (int) InputControlType.Back; i <= (int) InputControlType.Power; i++)
+			for (var i = (int) InputControlType.Back; i <= (int) InputControlType.Power; i++)
 			{
 				var control = ControlsByTarget[i];
 				if (control != null && control.IsPressed)
@@ -474,8 +479,8 @@ namespace InControl
 			}
 
 			// Next, commit all control values.
-			int controlsCount = Controls.Count;
-			for (int i = 0; i < controlsCount; i++)
+			var controlsCount = Controls.Count;
+			for (var i = 0; i < controlsCount; i++)
 			{
 				var control = Controls[i];
 				if (control != null)
@@ -627,8 +632,8 @@ namespace InControl
 		{
 			get
 			{
-				int controlsCount = Controls.Count;
-				for (int i = 0; i < controlsCount; i++)
+				var controlsCount = Controls.Count;
+				for (var i = 0; i < controlsCount; i++)
 				{
 					var control = Controls[i];
 					if (control != null && control.IsButton && control.IsPressed)
@@ -646,8 +651,8 @@ namespace InControl
 		{
 			get
 			{
-				int controlCount = Controls.Count;
-				for (int i = 0; i < controlCount; i++)
+				var controlCount = Controls.Count;
+				for (var i = 0; i < controlCount; i++)
 				{
 					var control = Controls[i];
 					if (control != null && control.IsButton && control.IsPressed)
@@ -665,8 +670,8 @@ namespace InControl
 		{
 			get
 			{
-				int controlCount = Controls.Count;
-				for (int i = 0; i < controlCount; i++)
+				var controlCount = Controls.Count;
+				for (var i = 0; i < controlCount; i++)
 				{
 					var control = Controls[i];
 					if (control != null && control.IsButton && control.WasPressed)
@@ -684,8 +689,8 @@ namespace InControl
 		{
 			get
 			{
-				int controlCount = Controls.Count;
-				for (int i = 0; i < controlCount; i++)
+				var controlCount = Controls.Count;
+				for (var i = 0; i < controlCount; i++)
 				{
 					var control = Controls[i];
 					if (control != null && control.IsButton && control.WasReleased)

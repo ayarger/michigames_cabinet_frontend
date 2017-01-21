@@ -2,11 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 #if UNITY_EDITOR
-using UnityEngine;
-
-
 namespace InControl.ReorderableList
 {
+	using UnityEngine;
+
 
 	/// <summary>
 	/// Adaptor allowing reorderable list control to interface with list data.

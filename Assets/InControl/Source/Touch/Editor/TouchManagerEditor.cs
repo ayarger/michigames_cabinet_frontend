@@ -1,11 +1,10 @@
 #if UNITY_EDITOR
-using UnityEditor;
-using UnityEngine;
-using System.IO;
-
-
 namespace InControl
 {
+	using UnityEditor;
+	using UnityEngine;
+
+
 	[CustomEditor( typeof( TouchManager ) )]
 	public class TouchManagerEditor : Editor
 	{

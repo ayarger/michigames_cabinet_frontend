@@ -1,10 +1,8 @@
-using System;
-using UnityEngine;
-using InControl;
-
-
 namespace MultiplayerWithBindingsExample
 {
+	using UnityEngine;
+
+
 	// This is just a simple "player" script that rotates and colors a cube
 	// based on input read from the actions field.
 	//

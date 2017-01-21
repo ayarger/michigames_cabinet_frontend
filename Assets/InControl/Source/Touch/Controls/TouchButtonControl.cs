@@ -1,9 +1,8 @@
-using System;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using UnityEngine;
+
+
 	public class TouchButtonControl : TouchControl
 	{
 		[Header( "Position" )]
@@ -89,7 +88,7 @@ namespace InControl
 			{
 				ButtonState = false;
 				var touchCount = TouchManager.TouchCount;
-				for (int i = 0; i < touchCount; i++)
+				for (var i = 0; i < touchCount; i++)
 				{
 					ButtonState = ButtonState || button.Contains( TouchManager.GetTouch( i ) );
 				}

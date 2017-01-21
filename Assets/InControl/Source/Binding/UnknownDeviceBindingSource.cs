@@ -1,10 +1,8 @@
-﻿using System;
-using System.IO;
-using UnityEngine;
-
-
-namespace InControl
+﻿namespace InControl
 {
+	using System.IO;
+	using UnityEngine;
+
 
 	public class UnknownDeviceBindingSource : BindingSource
 	{

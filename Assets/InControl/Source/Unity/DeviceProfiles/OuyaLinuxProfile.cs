@@ -1,7 +1,3 @@
-using System;
-using UnityEngine;
-
-
 namespace InControl
 {
 	// @cond nodoc
@@ -72,8 +68,8 @@ namespace InControl
 					Source = MenuKey
 				},
 				new InputControlMapping {
-					Handle = "TouchPad Tap",
-					Target = InputControlType.TouchPadTap,
+					Handle = "TouchPad Button",
+					Target = InputControlType.TouchPadButton,
 					Source = MouseButton0
 				},
 				new InputControlMapping {

@@ -1,14 +1,13 @@
 #if UNITY_EDITOR
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
-using UnityEditor;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using System;
+	using System.IO;
+	using System.Text.RegularExpressions;
+	using UnityEditor;
+	using UnityEngine;
+
+
 	[InitializeOnLoad]
 	internal class UnityProfileListGenerator
 	{
@@ -16,12 +15,12 @@ namespace InControl
 		{
 			DiscoverProfiles();
 		}
-		
-		
+
+
 		static void DiscoverProfiles()
 		{
-			var unityInputDeviceProfileType = typeof(UnityInputDeviceProfile);
-			var autoDiscoverAttributeType = typeof(InControl.AutoDiscover);
+			var unityInputDeviceProfileType = typeof( UnityInputDeviceProfile );
+			var autoDiscoverAttributeType = typeof( InControl.AutoDiscover );
 
 			var code2 = "";
 			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -39,16 +38,15 @@ namespace InControl
 				}
 			}
 
-			var instance = ScriptableObject.CreateInstance<UnityInputDeviceProfileList>(); 
+			var instance = ScriptableObject.CreateInstance<UnityInputDeviceProfileList>();
 			var filePath = AssetDatabase.GetAssetPath( MonoScript.FromScriptableObject( instance ) );
 			ScriptableObject.DestroyImmediate( instance );
 
-			string code1 = @"using System;
-using UnityEngine;
-
-
-namespace InControl
+			string code1 = @"namespace InControl
 {
+	using UnityEngine;
+
+
 	public class UnityInputDeviceProfileList : ScriptableObject
 	{
 		public static string[] Profiles = new string[] 
@@ -68,11 +66,11 @@ namespace InControl
 
 
 		static string GetFileContents( string fileName )
-		{			
+		{
 			StreamReader streamReader = new StreamReader( fileName );
 			var fileContents = streamReader.ReadToEnd();
 			streamReader.Close();
-			
+
 			return fileContents;
 		}
 

@@ -1,13 +1,25 @@
-using UnityEngine;
-
-
 namespace InControl
 {
+	using UnityEngine;
+
+
 	public abstract class TouchControl : MonoBehaviour
 	{
 		public enum ButtonTarget : int
 		{
-			None = 0,
+			None = InputControlType.None,
+
+			DPadDown = InputControlType.DPadDown,
+			DPadLeft = InputControlType.DPadLeft,
+			DPadRight = InputControlType.DPadRight,
+			DPadUp = InputControlType.DPadUp,
+
+			LeftTrigger = InputControlType.LeftTrigger,
+			RightTrigger = InputControlType.RightTrigger,
+
+			LeftBumper = InputControlType.LeftBumper,
+			RightBumper = InputControlType.RightBumper,
+
 			Action1 = InputControlType.Action1,
 			Action2 = InputControlType.Action2,
 			Action3 = InputControlType.Action3,
@@ -16,19 +28,13 @@ namespace InControl
 			Action6 = InputControlType.Action6,
 			Action7 = InputControlType.Action7,
 			Action8 = InputControlType.Action8,
-			Action9 = InputControlType.Action5,
+			Action9 = InputControlType.Action9,
 			Action10 = InputControlType.Action10,
 			Action11 = InputControlType.Action11,
 			Action12 = InputControlType.Action12,
-			LeftTrigger = InputControlType.LeftTrigger,
-			RightTrigger = InputControlType.RightTrigger,
-			LeftBumper = InputControlType.LeftBumper,
-			RightBumper = InputControlType.RightBumper,
-			DPadDown = InputControlType.DPadDown,
-			DPadLeft = InputControlType.DPadLeft,
-			DPadRight = InputControlType.DPadRight,
-			DPadUp = InputControlType.DPadUp,
+
 			Menu = InputControlType.Menu,
+
 			Button0 = InputControlType.Button0,
 			Button1 = InputControlType.Button1,
 			Button2 = InputControlType.Button2,
@@ -136,7 +142,7 @@ namespace InControl
 			}
 
 			var control = TouchManager.Device.GetControl( (InputControlType) target );
-			if (control != null)
+			if (control != null && control != InputControl.Null)
 			{
 				control.UpdateWithState( state, updateTick, deltaTime );
 			}
@@ -151,7 +157,7 @@ namespace InControl
 			}
 
 			var control = TouchManager.Device.GetControl( (InputControlType) target );
-			if (control != null)
+			if (control != null && control != InputControl.Null)
 			{
 				control.Commit();
 			}
@@ -160,7 +166,7 @@ namespace InControl
 
 		protected void SubmitAnalogValue( AnalogTarget target, Vector2 value, float lowerDeadZone, float upperDeadZone, ulong updateTick, float deltaTime )
 		{
-			if (TouchManager.Device == null)
+			if (TouchManager.Device == null || target == AnalogTarget.None)
 			{
 				return;
 			}
@@ -181,7 +187,7 @@ namespace InControl
 
 		protected void CommitAnalog( AnalogTarget target )
 		{
-			if (TouchManager.Device == null)
+			if (TouchManager.Device == null || target == AnalogTarget.None)
 			{
 				return;
 			}
@@ -200,7 +206,7 @@ namespace InControl
 
 		protected void SubmitRawAnalogValue( AnalogTarget target, Vector2 rawValue, ulong updateTick, float deltaTime )
 		{
-			if (TouchManager.Device == null)
+			if (TouchManager.Device == null || target == AnalogTarget.None)
 			{
 				return;
 			}
@@ -217,7 +223,7 @@ namespace InControl
 		}
 
 
-		protected static Vector2 SnapTo( Vector2 vector, SnapAngles snapAngles )
+		protected static Vector3 SnapTo( Vector2 vector, SnapAngles snapAngles )
 		{
 			if (snapAngles == SnapAngles.None)
 			{
@@ -230,9 +236,9 @@ namespace InControl
 		}
 
 
-		protected static Vector2 SnapTo( Vector2 vector, float snapAngle )
+		protected static Vector3 SnapTo( Vector2 vector, float snapAngle )
 		{
-			float angle = Vector2.Angle( vector, Vector2.up );
+			var angle = Vector2.Angle( vector, Vector2.up );
 
 			if (angle < snapAngle / 2.0f)
 			{
@@ -313,4 +319,3 @@ namespace InControl
 		}
 	}
 }
-

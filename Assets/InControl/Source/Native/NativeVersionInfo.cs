@@ -1,8 +1,8 @@
-﻿using System;
-
-
-namespace InControl
+﻿namespace InControl
 {
+	using System;
+
+
 	public struct NativeVersionInfo
 	{
 		public UInt32 major;

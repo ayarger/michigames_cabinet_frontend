@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
-
 namespace InControl
 {
 	// @cond nodoc

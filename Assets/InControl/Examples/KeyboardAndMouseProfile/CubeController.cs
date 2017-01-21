@@ -1,10 +1,8 @@
-using System;
-using UnityEngine;
-using InControl;
-
-
 namespace KeyboardAndMouseExample
 {
+	using UnityEngine;
+
+
 	// This file is intentionally left blank to prevent errors because
 	// Unity does not delete asset folders when importing new versions.
 	public class CubeController : MonoBehaviour

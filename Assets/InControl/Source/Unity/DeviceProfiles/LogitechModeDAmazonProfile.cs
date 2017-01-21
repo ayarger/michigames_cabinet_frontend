@@ -1,7 +1,4 @@
-﻿using System;
-
-
-namespace InControl
+﻿namespace InControl
 {
 	// Currently works only with the F710 for some reason.
 	// @cond nodoc

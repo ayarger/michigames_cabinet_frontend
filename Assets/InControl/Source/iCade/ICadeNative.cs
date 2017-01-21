@@ -1,11 +1,11 @@
 #if UNITY_IOS || UNITY_EDITOR
-using System;
-using System.Runtime.InteropServices;
-using AOT;
-
-
 namespace InControl
 {
+	using System;
+	using System.Runtime.InteropServices;
+	using AOT;
+
+
 	public static class ICadeNative
 	{
 		[DllImport( "__Internal" )]

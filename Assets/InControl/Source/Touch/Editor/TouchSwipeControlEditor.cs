@@ -1,12 +1,10 @@
 ﻿#if UNITY_EDITOR
-using System.IO;
-using UnityEditor;
-using UnityEngine;
-
-
 namespace InControl
 {
-	[CustomEditor( typeof(TouchSwipeControl) )]
+	using UnityEditor;
+
+
+	[CustomEditor( typeof( TouchSwipeControl ) )]
 	public class TouchSwipeControlEditor : TouchControlEditor
 	{
 		void OnEnable()

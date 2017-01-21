@@ -8,8 +8,8 @@ namespace InControl.NativeProfile
 	{
 		public MadCatzSSF4FightStickTEMacProfile()
 		{
-			Name = "Mad Catz SSF4 FightStick TE";
-			Meta = "Mad Catz SSF4 FightStick TE on Mac";
+			Name = "Mad Catz SSF4 Fight Stick TE";
+			Meta = "Mad Catz SSF4 Fight Stick TE on Mac";
 
 			Matchers = new[] {
 				new NativeInputDeviceMatcher {

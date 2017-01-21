@@ -2,11 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 #if UNITY_EDITOR
-using System;
-
-
 namespace InControl.ReorderableList
 {
+	using System;
+
 
 	/// <summary>
 	/// Additional flags which can be passed into reorderable list field.

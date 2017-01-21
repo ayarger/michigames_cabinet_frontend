@@ -1,11 +1,10 @@
 ﻿#if UNITY_EDITOR
-using System;
-using UnityEditor;
-using UnityEngine;
-
-
 namespace InControl.Internal
 {
+	using UnityEditor;
+	using UnityEngine;
+
+
 	internal static class EditorUtility
 	{
 		internal static GUIStyle titleStyle;

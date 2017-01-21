@@ -1,13 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using UnityEngine;
-
-
-namespace InControl
+﻿namespace InControl
 {
+	using System;
+	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
+	using System.IO;
+	using UnityEngine;
+
+
 	/// <summary>
 	/// This class represents a single action that may have multiple controls bound to it.
 	/// A bound control is represented by a subclass of BindingSource. For example,
@@ -35,14 +34,29 @@ namespace InControl
 		/// <summary>
 		/// Configures how this action listens for new bindings.
 		/// When <c>null</c> (default) the owner's <see cref="PlayerActionSet.ListenOptions"/> will be used.
-		/// <seealso cref="PlayerAction.ListenForBinding()"/>
+		/// <seealso cref="ListenForBinding()"/>
 		/// </summary>
 		public BindingListenOptions ListenOptions = null;
 
 		/// <summary>
-		/// The binding source type that provided input to this action.
+		/// The binding source type that last provided input to this action set.
 		/// </summary>
 		public BindingSourceType LastInputType = BindingSourceType.None;
+
+		/// <summary>
+		/// Occurs when the binding source type that last provided input to this action set changes.
+		/// </summary>
+		public event Action<BindingSourceType> OnLastInputTypeChanged;
+
+		/// <summary>
+		/// Updated when <see cref="LastInputType"/> changes.
+		/// </summary>
+		public ulong LastInputTypeChangedTick;
+
+		/// <summary>
+		/// This property can be used to store whatever arbitrary game data you want on this action.
+		/// </summary>
+		public object UserData { get; set; }
 
 		List<BindingSource> defaultBindings = new List<BindingSource>();
 		List<BindingSource> regularBindings = new List<BindingSource>();
@@ -322,9 +336,9 @@ namespace InControl
 
 		internal int CountBindingsOfType( BindingSourceType bindingSourceType )
 		{
-			int count = 0;
+			var count = 0;
 			var bindingCount = regularBindings.Count;
-			for (int i = 0; i < bindingCount; i++)
+			for (var i = 0; i < bindingCount; i++)
 			{
 				var binding = regularBindings[i];
 				if (binding.BoundTo == this && binding.BindingSourceType == bindingSourceType)
@@ -339,7 +353,7 @@ namespace InControl
 		internal void RemoveFirstBindingOfType( BindingSourceType bindingSourceType )
 		{
 			var bindingCount = regularBindings.Count;
-			for (int i = 0; i < bindingCount; i++)
+			for (var i = 0; i < bindingCount; i++)
 			{
 				var binding = regularBindings[i];
 				if (binding.BoundTo == this && binding.BindingSourceType == bindingSourceType)
@@ -355,7 +369,7 @@ namespace InControl
 		internal int IndexOfFirstInvalidBinding()
 		{
 			var bindingCount = regularBindings.Count;
-			for (int i = 0; i < bindingCount; i++)
+			for (var i = 0; i < bindingCount; i++)
 			{
 				if (!regularBindings[i].IsValid)
 				{
@@ -412,7 +426,7 @@ namespace InControl
 		public void ClearBindings()
 		{
 			var bindingCount = regularBindings.Count;
-			for (int i = 0; i < bindingCount; i++)
+			for (var i = 0; i < bindingCount; i++)
 			{
 				regularBindings[i].BoundTo = null;
 			}
@@ -431,7 +445,7 @@ namespace InControl
 			regularBindings.AddRange( defaultBindings );
 
 			var bindingCount = regularBindings.Count;
-			for (int i = 0; i < bindingCount; i++)
+			for (var i = 0; i < bindingCount; i++)
 			{
 				var binding = regularBindings[i];
 
@@ -470,7 +484,7 @@ namespace InControl
 			Owner.listenWithAction = this;
 
 			var bindingSourceListenerCount = bindingSourceListeners.Length;
-			for (int i = 0; i < bindingSourceListenerCount; i++)
+			for (var i = 0; i < bindingSourceListenerCount; i++)
 			{
 				bindingSourceListeners[i].Reset();
 			}
@@ -516,7 +530,7 @@ namespace InControl
 		void RemoveOrphanedBindings()
 		{
 			var bindingCount = regularBindings.Count;
-			for (int i = bindingCount - 1; i >= 0; i--)
+			for (var i = bindingCount - 1; i >= 0; i--)
 			{
 				if (regularBindings[i].BoundTo != this)
 				{
@@ -536,8 +550,11 @@ namespace InControl
 
 		void UpdateBindings( ulong updateTick, float deltaTime )
 		{
+			var lastInputType = LastInputType;
+			var lastInputTypeChangedTick = LastInputTypeChangedTick;
+
 			var bindingCount = regularBindings.Count;
-			for (int i = bindingCount - 1; i >= 0; i--)
+			for (var i = bindingCount - 1; i >= 0; i--)
 			{
 				var binding = regularBindings[i];
 
@@ -551,7 +568,8 @@ namespace InControl
 					var value = binding.GetValue( Device );
 					if (UpdateWithValue( value, updateTick, deltaTime ))
 					{
-						LastInputType = binding.BindingSourceType;
+						lastInputType = binding.BindingSourceType;
+						lastInputTypeChangedTick = updateTick;
 					}
 				}
 			}
@@ -559,6 +577,24 @@ namespace InControl
 			Commit();
 
 			Enabled = Owner.Enabled;
+
+
+			if (lastInputTypeChangedTick > LastInputTypeChangedTick)
+			{
+				if (lastInputType != BindingSourceType.MouseBindingSource ||
+					Utility.Abs( LastValue - Value ) >= MouseBindingSource.JitterThreshold)
+				{
+					var triggerEvent = lastInputType != LastInputType;
+
+					LastInputType = lastInputType;
+					LastInputTypeChangedTick = lastInputTypeChangedTick;
+
+					if (OnLastInputTypeChanged != null && triggerEvent)
+					{
+						OnLastInputTypeChanged.Invoke( lastInputType );
+					}
+				}
+			}
 		}
 
 
@@ -570,7 +606,7 @@ namespace InControl
 				var listenOptions = ListenOptions ?? Owner.ListenOptions;
 
 				var bindingSourceListenerCount = bindingSourceListeners.Length;
-				for (int i = 0; i < bindingSourceListenerCount; i++)
+				for (var i = 0; i < bindingSourceListenerCount; i++)
 				{
 					binding = bindingSourceListeners[i].Listen( listenOptions, device );
 					if (binding != null)
@@ -662,7 +698,7 @@ namespace InControl
 		{
 			visibleBindings.Clear();
 			var bindingCount = regularBindings.Count;
-			for (int i = 0; i < bindingCount; i++)
+			for (var i = 0; i < bindingCount; i++)
 			{
 				var binding = regularBindings[i];
 				if (binding.IsValid)
@@ -698,19 +734,55 @@ namespace InControl
 		}
 
 
+		[Obsolete( "Please set this property on device controls directly. It does nothing here." )]
+		public new float LowerDeadZone
+		{
+			get
+			{
+				return 0.0f;
+			}
+
+			set
+			{
+#pragma warning disable 0168
+				var dummy = value;
+#pragma warning restore 0168
+			}
+		}
+
+
+		[Obsolete( "Please set this property on device controls directly. It does nothing here." )]
+		public new float UpperDeadZone
+		{
+			get
+			{
+				return 0.0f;
+			}
+
+			set
+			{
+#pragma warning disable 0168
+				var dummy = value;
+#pragma warning restore 0168
+			}
+		}
+
 
 		internal void Load( BinaryReader reader )
 		{
 			ClearBindings();
 
 			var bindingCount = reader.ReadInt32();
-			for (int i = 0; i < bindingCount; i++)
+			for (var i = 0; i < bindingCount; i++)
 			{
 				var bindingSourceType = (BindingSourceType) reader.ReadInt32();
 				BindingSource bindingSource;
 
 				switch (bindingSourceType)
 				{
+				case BindingSourceType.None:
+					continue;
+
 				case BindingSourceType.DeviceBindingSource:
 					bindingSource = new DeviceBindingSource();
 					break;
@@ -746,7 +818,7 @@ namespace InControl
 			var bindingCount = regularBindings.Count;
 			writer.Write( bindingCount );
 
-			for (int i = 0; i < bindingCount; i++)
+			for (var i = 0; i < bindingCount; i++)
 			{
 				var binding = regularBindings[i];
 				writer.Write( (int) binding.BindingSourceType );

@@ -1,10 +1,9 @@
-﻿using System;
-using System.IO;
-using UnityEngine;
-
-
-namespace InControl
+﻿namespace InControl
 {
+	using System;
+	using System.IO;
+
+
 	public struct UnknownDeviceControl : IEquatable<UnknownDeviceControl>
 	{
 		public static readonly UnknownDeviceControl None = new UnknownDeviceControl( InputControlType.None, InputRangeType.None );

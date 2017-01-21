@@ -1,9 +1,8 @@
-using System;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using UnityEngine;
+
+
 	// This is kind of "experimental"... while it works on iOS, gyro controls are
 	// inconsistent and are usually fine tuned to the games that use them
 	// which is somewhat beyond the scope of this project. But, if you

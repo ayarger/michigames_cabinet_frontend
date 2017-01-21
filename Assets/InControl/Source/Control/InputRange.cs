@@ -1,10 +1,8 @@
-﻿using System;
-using System.IO;
-using UnityEngine;
-
-
-namespace InControl
+﻿namespace InControl
 {
+	using UnityEngine;
+
+
 	/// <summary>
 	/// This type represents a range inclusive of two values, and can remap a value from one range to another.
 	/// </summary>

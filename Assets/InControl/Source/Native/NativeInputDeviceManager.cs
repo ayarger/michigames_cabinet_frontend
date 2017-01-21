@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using UnityEngine;
-using System.Text;
-
-
 namespace InControl
 {
-	using DeviceHandle = UInt32;
+	using System;
+	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
+	using System.Runtime.InteropServices;
+	using System.Text;
+	using UnityEngine;
+	using DeviceHandle = System.UInt32;
+
 
 	public class NativeInputDeviceManager : InputDeviceManager
 	{
@@ -19,6 +19,8 @@ namespace InControl
 		List<NativeInputDeviceProfile> systemDeviceProfiles;
 		List<NativeInputDeviceProfile> customDeviceProfiles;
 
+		DeviceHandle[] deviceEvents;
+
 
 		public NativeInputDeviceManager()
 		{
@@ -27,6 +29,8 @@ namespace InControl
 
 			systemDeviceProfiles = new List<NativeInputDeviceProfile>( NativeInputDeviceProfileList.Profiles.Length );
 			customDeviceProfiles = new List<NativeInputDeviceProfile>();
+
+			deviceEvents = new DeviceHandle[32];
 
 			AddSystemDeviceProfiles();
 
@@ -53,46 +57,73 @@ namespace InControl
 		}
 
 
+		UInt32 NextPowerOfTwo( UInt32 x )
+		{
+			if (x < 0)
+			{
+				return 0;
+			}
+			--x;
+			x |= x >> 1;
+			x |= x >> 2;
+			x |= x >> 4;
+			x |= x >> 8;
+			x |= x >> 16;
+			return x + 1;
+		}
+
+
 		public override void Update( ulong updateTick, float deltaTime )
 		{
-			DeviceHandle deviceHandle;
-
-			while (Native.AttachedDeviceQueue.Dequeue( out deviceHandle ))
+			IntPtr data;
+			var size = Native.GetDeviceEvents( out data );
+			if (size > 0)
 			{
-				var stringBuilder = new StringBuilder( 256 );
-				stringBuilder.Append( "Attached native device with handle " + deviceHandle + ":\n" );
+				Utility.ArrayExpand( ref deviceEvents, size );
+				MarshalUtility.Copy( data, deviceEvents, size );
 
-				NativeDeviceInfo deviceInfo;
-				if (Native.GetDeviceInfo( deviceHandle, out deviceInfo ))
+				var index = 0;
+				var attachedEventCount = deviceEvents[index++];
+				for (var i = 0; i < attachedEventCount; i++)
 				{
-					stringBuilder.AppendFormat( "Name: {0}\n", deviceInfo.name );
-					stringBuilder.AppendFormat( "Driver Type: {0}\n", deviceInfo.driverType );
-					stringBuilder.AppendFormat( "Location ID: {0}\n", deviceInfo.location );
-					stringBuilder.AppendFormat( "Serial Number: {0}\n", deviceInfo.serialNumber );
-					stringBuilder.AppendFormat( "Vendor ID: 0x{0:x}\n", deviceInfo.vendorID );
-					stringBuilder.AppendFormat( "Product ID: 0x{0:x}\n", deviceInfo.productID );
-					stringBuilder.AppendFormat( "Version Number: 0x{0:x}\n", deviceInfo.versionNumber );
-					stringBuilder.AppendFormat( "Buttons: {0}\n", deviceInfo.numButtons );
-					stringBuilder.AppendFormat( "Analogs: {0}\n", deviceInfo.numAnalogs );
+					var deviceHandle = deviceEvents[index++];
+					var stringBuilder = new StringBuilder( 256 );
+					stringBuilder.Append( "Attached native device with handle " + deviceHandle + ":\n" );
 
-					DetectDevice( deviceHandle, deviceInfo );
+					NativeDeviceInfo deviceInfo;
+					if (Native.GetDeviceInfo( deviceHandle, out deviceInfo ))
+					{
+						stringBuilder.AppendFormat( "Name: {0}\n", deviceInfo.name );
+						stringBuilder.AppendFormat( "Driver Type: {0}\n", deviceInfo.driverType );
+						stringBuilder.AppendFormat( "Location ID: {0}\n", deviceInfo.location );
+						stringBuilder.AppendFormat( "Serial Number: {0}\n", deviceInfo.serialNumber );
+						stringBuilder.AppendFormat( "Vendor ID: 0x{0:x}\n", deviceInfo.vendorID );
+						stringBuilder.AppendFormat( "Product ID: 0x{0:x}\n", deviceInfo.productID );
+						stringBuilder.AppendFormat( "Version Number: 0x{0:x}\n", deviceInfo.versionNumber );
+						stringBuilder.AppendFormat( "Buttons: {0}\n", deviceInfo.numButtons );
+						stringBuilder.AppendFormat( "Analogs: {0}\n", deviceInfo.numAnalogs );
+
+						DetectDevice( deviceHandle, deviceInfo );
+					}
+
+					Logger.LogInfo( stringBuilder.ToString() );
 				}
 
-				Debug.Log( stringBuilder.ToString() );
-			}
-
-			while (Native.DetachedDeviceQueue.Dequeue( out deviceHandle ))
-			{
-				Debug.Log( "Detached native device with handle " + deviceHandle + ":" );
-
-				var device = FindAttachedDevice( deviceHandle );
-				if (device != null)
+				var detachedEventCount = deviceEvents[index++];
+				for (var i = 0; i < detachedEventCount; i++)
 				{
-					DetachDevice( device );
-				}
-				else
-				{
-					Debug.Log( "Couldn't find device to detach with handle: " + deviceHandle );
+					var deviceHandle = deviceEvents[index++];
+					Logger.LogInfo( "Detached native device with handle " + deviceHandle + ":" );
+
+					var device = FindAttachedDevice( deviceHandle );
+					if (device != null)
+					{
+						DetachDevice( device );
+					}
+					else
+					{
+						Logger.LogWarning( "Couldn't find device to detach with handle: " + deviceHandle );
+					}
 				}
 			}
 		}
@@ -132,8 +163,8 @@ namespace InControl
 
 		NativeInputDevice FindAttachedDevice( DeviceHandle deviceHandle )
 		{
-			int attachedDevicesCount = attachedDevices.Count;
-			for (int i = 0; i < attachedDevicesCount; i++)
+			var attachedDevicesCount = attachedDevices.Count;
+			for (var i = 0; i < attachedDevicesCount; i++)
 			{
 				var device = attachedDevices[i];
 				if (device.Handle == deviceHandle)
@@ -160,42 +191,42 @@ namespace InControl
 
 		static NativeInputDevice SystemFindDetachedDevice( NativeDeviceInfo deviceInfo, ReadOnlyCollection<NativeInputDevice> detachedDevices )
 		{
-			int detachedDevicesCount = detachedDevices.Count;
+			var detachedDevicesCount = detachedDevices.Count;
 
-			for (int i = 0; i < detachedDevicesCount; i++)
+			for (var i = 0; i < detachedDevicesCount; i++)
 			{
 				var device = detachedDevices[i];
 				if (device.Info.HasSameVendorID( deviceInfo ) &&
-				    device.Info.HasSameProductID( deviceInfo ) &&
-				    device.Info.HasSameSerialNumber( deviceInfo ))
+					device.Info.HasSameProductID( deviceInfo ) &&
+					device.Info.HasSameSerialNumber( deviceInfo ))
 				{
 					return device;
 				}
 			}
 
-			for (int i = 0; i < detachedDevicesCount; i++)
+			for (var i = 0; i < detachedDevicesCount; i++)
 			{
 				var device = detachedDevices[i];
 				if (device.Info.HasSameVendorID( deviceInfo ) &&
-				    device.Info.HasSameProductID( deviceInfo ) &&
-				    device.Info.HasSameLocation( deviceInfo ))
+					device.Info.HasSameProductID( deviceInfo ) &&
+					device.Info.HasSameLocation( deviceInfo ))
 				{
 					return device;
 				}
 			}
 
-			for (int i = 0; i < detachedDevicesCount; i++)
+			for (var i = 0; i < detachedDevicesCount; i++)
 			{
 				var device = detachedDevices[i];
 				if (device.Info.HasSameVendorID( deviceInfo ) &&
-				    device.Info.HasSameProductID( deviceInfo ) &&
-				    device.Info.HasSameVersionNumber( deviceInfo ))
+					device.Info.HasSameProductID( deviceInfo ) &&
+					device.Info.HasSameVersionNumber( deviceInfo ))
 				{
 					return device;
 				}
 			}
 
-			for (int i = 0; i < detachedDevicesCount; i++)
+			for (var i = 0; i < detachedDevicesCount; i++)
 			{
 				var device = detachedDevices[i];
 				if (device.Info.HasSameLocation( deviceInfo ))
@@ -230,14 +261,15 @@ namespace InControl
 		public static bool CheckPlatformSupport( ICollection<string> errors )
 		{
 			if (Application.platform != RuntimePlatform.OSXPlayer &&
-			    Application.platform != RuntimePlatform.OSXEditor &&
-			    Application.platform != RuntimePlatform.WindowsPlayer &&
-			    Application.platform != RuntimePlatform.WindowsEditor)
+				Application.platform != RuntimePlatform.OSXEditor &&
+				Application.platform != RuntimePlatform.WindowsPlayer &&
+				Application.platform != RuntimePlatform.WindowsEditor)
 			{
+				errors.Add( "Native input is currently only supported on Windows and Mac." );
 				return false;
 			}
 
-			#if UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_4_7
+#if UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_4_7
 			if (!Application.HasProLicense())
 			{
 				if (errors != null)
@@ -246,13 +278,13 @@ namespace InControl
 				}
 				return false;
 			}
-			#endif
+#endif
 
 			try
 			{
 				NativeVersionInfo versionInfo;
 				Native.GetVersionInfo( out versionInfo );
-				Debug.Log( "InControl Native (version " + versionInfo.major + "." + versionInfo.minor + "." + versionInfo.patch + " build " + versionInfo.build + ")" );
+				Logger.LogInfo( "InControl Native (version " + versionInfo.major + "." + versionInfo.minor + "." + versionInfo.patch + ")" );
 			}
 			catch (DllNotFoundException e)
 			{

@@ -1,9 +1,9 @@
-﻿using System;
-using UnityEngine;
-
-
-namespace InControl
+﻿namespace InControl
 {
+	using System;
+	using UnityEngine;
+
+
 	/// <summary>
 	/// "Custom profiles" are deprecated in favor of the new user bindings API.
 	/// See the PlayerAction and PlayerActionSet classes which accomplish the same goal

@@ -1,9 +1,9 @@
-using System;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using System;
+	using UnityEngine;
+
+
 	public class OneAxisInputControl : IInputControl
 	{
 		public ulong UpdateTick { get; protected set; }
@@ -36,6 +36,11 @@ namespace InControl
 
 		void PrepareForUpdate( ulong updateTick )
 		{
+			if (IsNull)
+			{
+				return;
+			}
+
 			if (updateTick < pendingTick)
 			{
 				throw new InvalidOperationException( "Cannot be updated with an earlier tick." );
@@ -58,6 +63,11 @@ namespace InControl
 
 		public bool UpdateWithState( bool state, ulong updateTick, float deltaTime )
 		{
+			if (IsNull)
+			{
+				return false;
+			}
+
 			PrepareForUpdate( updateTick );
 
 			nextState.Set( state || nextState.State );
@@ -68,6 +78,11 @@ namespace InControl
 
 		public bool UpdateWithValue( float value, ulong updateTick, float deltaTime )
 		{
+			if (IsNull)
+			{
+				return false;
+			}
+
 			PrepareForUpdate( updateTick );
 
 			if (Utility.Abs( value ) > Utility.Abs( nextState.RawValue ))
@@ -91,6 +106,11 @@ namespace InControl
 
 		internal bool UpdateWithRawValue( float value, ulong updateTick, float deltaTime )
 		{
+			if (IsNull)
+			{
+				return false;
+			}
+
 			Raw = true;
 
 			PrepareForUpdate( updateTick );
@@ -108,6 +128,11 @@ namespace InControl
 
 		internal void SetValue( float value, ulong updateTick )
 		{
+			if (IsNull)
+			{
+				return;
+			}
+
 			if (updateTick > pendingTick)
 			{
 				lastState = thisState;
@@ -133,13 +158,18 @@ namespace InControl
 
 		public void Commit()
 		{
+			if (IsNull)
+			{
+				return;
+			}
+
 			pendingCommit = false;
 			// nextState.Set( Utility.ApplySmoothing( nextState.Value, lastState.Value, Time.deltaTime, sensitivity ), stateThreshold );
 			thisState = nextState;
 
 			if (clearInputState)
 			{
-				// The net result here should be that the entire state will return zero/false 
+				// The net result here should be that the entire state will return zero/false
 				// from when ResetState() is called until the next call to Commit(), which is
 				// the next update tick, and WasPressed, WasReleased and WasRepeated will then
 				// return false during this following tick.
@@ -206,7 +236,7 @@ namespace InControl
 		public bool State
 		{
 			get
-			{ 
+			{
 				return Enabled && thisState.State;
 			}
 		}
@@ -215,7 +245,7 @@ namespace InControl
 		public bool LastState
 		{
 			get
-			{ 
+			{
 				return Enabled && lastState.State;
 			}
 		}
@@ -224,7 +254,7 @@ namespace InControl
 		public float Value
 		{
 			get
-			{ 
+			{
 				return Enabled ? thisState.Value : 0.0f;
 			}
 		}
@@ -233,7 +263,7 @@ namespace InControl
 		public float LastValue
 		{
 			get
-			{ 
+			{
 				return Enabled ? lastState.Value : 0.0f;
 			}
 		}
@@ -242,7 +272,7 @@ namespace InControl
 		public float RawValue
 		{
 			get
-			{ 
+			{
 				return Enabled ? thisState.RawValue : 0.0f;
 			}
 		}
@@ -251,7 +281,7 @@ namespace InControl
 		internal float NextRawValue
 		{
 			get
-			{ 
+			{
 				return Enabled ? nextState.RawValue : 0.0f;
 			}
 		}
@@ -260,8 +290,8 @@ namespace InControl
 		public bool HasChanged
 		{
 			get
-			{ 
-				return Enabled && thisState != lastState; 
+			{
+				return Enabled && thisState != lastState;
 			}
 		}
 
@@ -269,7 +299,7 @@ namespace InControl
 		public bool IsPressed
 		{
 			get
-			{ 
+			{
 				return Enabled && thisState.State;
 			}
 		}
@@ -278,7 +308,7 @@ namespace InControl
 		public bool WasPressed
 		{
 			get
-			{ 
+			{
 				return Enabled && thisState && !lastState;
 			}
 		}
@@ -287,7 +317,7 @@ namespace InControl
 		public bool WasReleased
 		{
 			get
-			{ 
+			{
 				return Enabled && !thisState && lastState;
 			}
 		}
@@ -296,17 +326,17 @@ namespace InControl
 		public bool WasRepeated
 		{
 			get
-			{ 
+			{
 				return Enabled && wasRepeated;
 			}
 		}
 
 
 		public float Sensitivity
-		{ 
+		{
 			get
-			{ 
-				return sensitivity; 
+			{
+				return sensitivity;
 			}
 
 			set
@@ -317,23 +347,53 @@ namespace InControl
 
 
 		public float LowerDeadZone
-		{ 
-			get { return lowerDeadZone; }
-			set { lowerDeadZone = Mathf.Clamp01( value ); }
+		{
+			get
+			{
+				return lowerDeadZone;
+			}
+
+			set
+			{
+				lowerDeadZone = Mathf.Clamp01( value );
+			}
 		}
 
 
 		public float UpperDeadZone
-		{ 
-			get { return upperDeadZone; }
-			set { upperDeadZone = Mathf.Clamp01( value ); }
+		{
+			get
+			{
+				return upperDeadZone;
+			}
+
+			set
+			{
+				upperDeadZone = Mathf.Clamp01( value );
+			}
 		}
 
 
 		public float StateThreshold
-		{ 
-			get { return stateThreshold; }
-			set { stateThreshold = Mathf.Clamp01( value ); }
+		{
+			get
+			{
+				return stateThreshold;
+			}
+
+			set
+			{
+				stateThreshold = Mathf.Clamp01( value );
+			}
+		}
+
+
+		public bool IsNull
+		{
+			get
+			{
+				return ReferenceEquals( this, InputControl.Null );
+			}
 		}
 
 
@@ -349,4 +409,3 @@ namespace InControl
 		}
 	}
 }
-

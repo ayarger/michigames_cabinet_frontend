@@ -1,15 +1,18 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using UnityEngine;
+namespace InControl
+{
+	using System;
+	using System.Collections.Generic;
+	using UnityEngine;
+
+#if NETFX_CORE
+	using System.Reflection;
+#endif
+
 #if UNITY_5_4_OR_NEWER
-using UnityEngine.SceneManagement;
+	using UnityEngine.SceneManagement;
 #endif
 
 
-namespace InControl
-{
 	public class InControlManager : SingletonMonoBehavior<InControlManager, MonoBehaviour>
 	{
 		public bool logDebugInfo = false;
@@ -55,16 +58,12 @@ namespace InControl
 			InputManager.NativeInputUpdateRate = (uint) Mathf.Max( nativeInputUpdateRate, 0 );
 			InputManager.NativeInputPreventSleep = nativeInputPreventSleep;
 
-#if UNITY_5_4_OR_NEWER
-			SceneManager.sceneLoaded -= OnSceneWasLoaded;
-			SceneManager.sceneLoaded += OnSceneWasLoaded;
-#endif
-
 			if (InputManager.SetupInternal())
 			{
 				if (logDebugInfo)
 				{
 					Debug.Log( "InControl (version " + InputManager.Version + ")" );
+					Logger.OnLogMessage -= LogMessage;
 					Logger.OnLogMessage += LogMessage;
 				}
 
@@ -86,6 +85,11 @@ namespace InControl
 				}
 			}
 
+#if UNITY_5_4_OR_NEWER
+			SceneManager.sceneLoaded -= OnSceneWasLoaded;
+			SceneManager.sceneLoaded += OnSceneWasLoaded;
+#endif
+
 			if (dontDestroyOnLoad)
 			{
 				DontDestroyOnLoad( this );
@@ -95,6 +99,10 @@ namespace InControl
 
 		void OnDisable()
 		{
+#if UNITY_5_4_OR_NEWER
+			SceneManager.sceneLoaded -= OnSceneWasLoaded;
+#endif
+
 			if (InControlManager.Instance == this)
 			{
 				InputManager.ResetInternal();
@@ -174,7 +182,7 @@ namespace InControl
 #endif
 
 
-		void LogMessage( LogMessage logMessage )
+		static void LogMessage( LogMessage logMessage )
 		{
 			switch (logMessage.type)
 			{

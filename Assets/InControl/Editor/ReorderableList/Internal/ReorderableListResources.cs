@@ -2,13 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 #if UNITY_EDITOR
-using UnityEngine;
-using UnityEditor;
-using System;
-
-
 namespace InControl.ReorderableList.Internal
 {
+	using UnityEngine;
+	using System;
+
 
 	/// <summary>
 	/// Resources to assist with reorderable list control.

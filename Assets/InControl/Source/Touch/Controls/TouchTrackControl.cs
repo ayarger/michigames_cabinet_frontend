@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-
-namespace InControl
+﻿namespace InControl
 {
+	using UnityEngine;
+
+
 	public class TouchTrackControl : TouchControl
 	{
 		[Header( "Dimensions" )]
@@ -21,12 +19,22 @@ namespace InControl
 		public AnalogTarget target = AnalogTarget.LeftStick;
 		public float scale = 1.0f;
 
+		[Header( "Button Target" )]
+
+		public ButtonTarget tapTarget = ButtonTarget.None;
+		public float maxTapDuration = 0.5f;
+		public float maxTapMovement = 1.0f;
+
 
 		Rect worldActiveArea;
 		Vector3 lastPosition;
 		Vector3 thisPosition;
 		Touch currentTouch;
 		bool dirty;
+
+		bool fireButtonTarget;
+		float beganTime;
+		Vector3 beganPosition;
 
 
 		public override void CreateControl()
@@ -57,6 +65,15 @@ namespace InControl
 		}
 
 
+		void OnValidate()
+		{
+			if (maxTapDuration < 0.0f)
+			{
+				maxTapDuration = 0.0f;
+			}
+		}
+
+
 		void Update()
 		{
 			if (dirty)
@@ -72,12 +89,16 @@ namespace InControl
 			var delta = thisPosition - lastPosition;
 			SubmitRawAnalogValue( target, delta * scale, updateTick, deltaTime );
 			lastPosition = thisPosition;
+
+			SubmitButtonState( tapTarget, fireButtonTarget, updateTick, deltaTime );
+			fireButtonTarget = false;
 		}
 
 
 		public override void CommitControlState( ulong updateTick, float deltaTime )
 		{
 			CommitAnalog( target );
+			CommitButton( tapTarget );
 		}
 
 
@@ -88,12 +109,13 @@ namespace InControl
 				return;
 			}
 
-			var beganPosition = TouchManager.ScreenToWorldPoint( touch.position );
+			beganPosition = TouchManager.ScreenToWorldPoint( touch.position );
 			if (worldActiveArea.Contains( beganPosition ))
 			{
 				thisPosition = TouchManager.ScreenToViewPoint( touch.position * 100.0f );
 				lastPosition = thisPosition;
 				currentTouch = touch;
+				beganTime = Time.realtimeSinceStartup;
 			}
 		}
 
@@ -116,6 +138,19 @@ namespace InControl
 				return;
 			}
 
+			var endedPosition = TouchManager.ScreenToWorldPoint( touch.position );
+			var deltaPosition = endedPosition - beganPosition;
+
+			var deltaTime = Time.realtimeSinceStartup - beganTime;
+
+			if (deltaPosition.magnitude <= maxTapMovement && deltaTime <= maxTapDuration)
+			{
+				if (tapTarget != ButtonTarget.None)
+				{
+					fireButtonTarget = true;
+				}
+			}
+
 			thisPosition = Vector3.zero;
 			lastPosition = Vector3.zero;
 			currentTouch = null;
@@ -123,7 +158,7 @@ namespace InControl
 
 
 		public Rect ActiveArea
-		{ 
+		{
 			get
 			{
 				return activeArea;
@@ -141,7 +176,7 @@ namespace InControl
 
 
 		public TouchUnitType AreaUnitType
-		{ 
+		{
 			get
 			{
 				return areaUnitType;

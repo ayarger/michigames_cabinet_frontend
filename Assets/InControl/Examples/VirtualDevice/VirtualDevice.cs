@@ -1,10 +1,9 @@
-﻿using System;
-using UnityEngine;
-using InControl;
-
-
-namespace VirtualDeviceExample
+﻿namespace VirtualDeviceExample
 {
+	using InControl;
+	using UnityEngine;
+
+
 	// An example of how to map keyboard/mouse input (or anything else) to a virtual device.
 	//
 	public class VirtualDevice : InputDevice

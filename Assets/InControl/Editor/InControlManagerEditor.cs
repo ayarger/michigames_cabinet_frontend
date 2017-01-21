@@ -1,11 +1,10 @@
 #if UNITY_EDITOR
-using System.IO;
 using UnityEditor;
-using UnityEngine;
 
 
 namespace InControl
 {
+	using UnityEngine;
 	using Internal;
 	using ReorderableList;
 
@@ -31,7 +30,7 @@ namespace InControl
 
 		SerializedProperty enableNativeInput;
 		SerializedProperty nativeInputEnableXInput;
-		//		SerializedProperty nativeInputPreventSleep;
+		//SerializedProperty nativeInputPreventSleep;
 		SerializedProperty nativeInputOverrideUpdateRate;
 		SerializedProperty nativeInputUpdateRate;
 
@@ -58,11 +57,11 @@ namespace InControl
 
 			enableNativeInput = serializedObject.FindProperty( "enableNativeInput" );
 			nativeInputEnableXInput = serializedObject.FindProperty( "nativeInputEnableXInput" );
-			//			nativeInputPreventSleep = serializedObject.FindProperty( "nativeInputPreventSleep" );
+			//nativeInputPreventSleep = serializedObject.FindProperty( "nativeInputPreventSleep" );
 			nativeInputOverrideUpdateRate = serializedObject.FindProperty( "nativeInputOverrideUpdateRate" );
 			nativeInputUpdateRate = serializedObject.FindProperty( "nativeInputUpdateRate" );
 
-			headerTexture = Internal.EditorTextures.InControlHeader;
+			headerTexture = EditorTextures.InControlHeader;
 		}
 
 
@@ -103,11 +102,11 @@ namespace InControl
 			{
 				EditorUtility.BeginGroup();
 
-				//				var text = "" +
-				//				           "<b>Warning: <color=#cc0000>Advanced Settings</color></b>\n" +
-				//				           "Do not modify these unless you perfectly understand what effect they will have. " +
-				//				           "Set to zero to automatically use sensible defaults.";
-				//				GUILayout.Box( text, EditorUtility.wellStyle, GUILayout.ExpandWidth( true ) );
+				//var text = "" +
+				//		   "<b>Warning: <color=#cc0000>Advanced Settings</color></b>\n" +
+				//		   "Do not modify these unless you perfectly understand what effect they will have. " +
+				//		   "Set to zero to automatically use sensible defaults.";
+				//GUILayout.Box( text, EditorUtility.wellStyle, GUILayout.ExpandWidth( true ) );
 
 				xInputOverrideUpdateRate.boolValue = EditorGUILayout.ToggleLeft( "Override Update Rate <color=#777>(Not Recommended)</color>", xInputOverrideUpdateRate.boolValue, EditorUtility.labelStyle );
 				xInputUpdateRate.intValue = xInputOverrideUpdateRate.boolValue ? Mathf.Max( EditorGUILayout.IntField( "Update Rate (Hz)", xInputUpdateRate.intValue ), 0 ) : 0;
@@ -133,13 +132,13 @@ namespace InControl
 				EditorUtility.PopTintColor();
 
 				nativeInputEnableXInput.boolValue = EditorGUILayout.ToggleLeft( "Enable XInput Support (Windows only)", nativeInputEnableXInput.boolValue, EditorUtility.labelStyle );
-				//				nativeInputPreventSleep.boolValue = EditorGUILayout.ToggleLeft( "Prevent Screensaver/Sleep (currently Mac only)", nativeInputPreventSleep.boolValue, EditorUtility.labelStyle );
+				//nativeInputPreventSleep.boolValue = EditorGUILayout.ToggleLeft( "Prevent Screensaver/Sleep (currently Mac only)", nativeInputPreventSleep.boolValue, EditorUtility.labelStyle );
 
-				//				var text2 = "" +
-				//				            "<b>Warning: <color=#cc0000>Advanced Settings</color></b>\n" +
-				//				            "Do not modify these unless you perfectly understand what effect they will have. " +
-				//				            "Set to zero to automatically use sensible defaults.";
-				//				GUILayout.Box( text2, EditorUtility.wellStyle, GUILayout.ExpandWidth( true ) );
+				//var text2 = "" +
+				//			"<b>Warning: <color=#cc0000>Advanced Settings</color></b>\n" +
+				//			"Do not modify these unless you perfectly understand what effect they will have. " +
+				//			"Set to zero to automatically use sensible defaults.";
+				//GUILayout.Box( text2, EditorUtility.wellStyle, GUILayout.ExpandWidth( true ) );
 
 				nativeInputOverrideUpdateRate.boolValue = EditorGUILayout.ToggleLeft( "Override Update Rate <color=#777>(Not Recommended)</color>", nativeInputOverrideUpdateRate.boolValue, EditorUtility.labelStyle );
 				nativeInputUpdateRate.intValue = nativeInputOverrideUpdateRate.boolValue ? Mathf.Max( nativeInputUpdateRate.intValue, EditorGUILayout.IntField( "Update Rate (Hz)", nativeInputUpdateRate.intValue ), 0 ) : 0;

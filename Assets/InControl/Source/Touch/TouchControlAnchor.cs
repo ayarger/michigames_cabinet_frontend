@@ -1,6 +1,3 @@
-using System;
-
-
 namespace InControl
 {
 	public enum TouchControlAnchor : int

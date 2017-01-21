@@ -1,13 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using System;
+	using System.Collections.Generic;
+	using UnityEngine;
+
+
 	public class UnityInputDeviceManager : InputDeviceManager
 	{
 		const float deviceRefreshInterval = 1.0f;
@@ -55,7 +52,7 @@ namespace InControl
 			joystickNames = Input.GetJoystickNames();
 			joystickCount = joystickNames.Length;
 			joystickHash = 17 * 31 + joystickCount;
-			for (int i = 0; i < joystickCount; i++)
+			for (var i = 0; i < joystickCount; i++)
 			{
 				joystickHash = joystickHash * 31 + joystickNames[i].GetHashCode();
 			}
@@ -84,7 +81,7 @@ namespace InControl
 		void DetachDevices()
 		{
 			var deviceCount = devices.Count;
-			for (int i = 0; i < deviceCount; i++)
+			for (var i = 0; i < deviceCount; i++)
 			{
 				InputManager.DetachDevice( devices[i] );
 			}
@@ -109,8 +106,8 @@ namespace InControl
 
 		void AttachKeyboardDevices()
 		{
-			int deviceProfileCount = systemDeviceProfiles.Count;
-			for (int i = 0; i < deviceProfileCount; i++)
+			var deviceProfileCount = systemDeviceProfiles.Count;
+			for (var i = 0; i < deviceProfileCount; i++)
 			{
 				var deviceProfile = systemDeviceProfiles[i];
 				if (deviceProfile.IsNotJoystick && deviceProfile.IsSupportedOnThisPlatform)
@@ -125,7 +122,7 @@ namespace InControl
 		{
 			try
 			{
-				for (int i = 0; i < joystickCount; i++)
+				for (var i = 0; i < joystickCount; i++)
 				{
 					DetectJoystickDevice( i + 1, joystickNames[i] );
 				}
@@ -141,7 +138,7 @@ namespace InControl
 		bool HasAttachedDeviceWithJoystickId( int unityJoystickId )
 		{
 			var deviceCount = devices.Count;
-			for (int i = 0; i < deviceCount; i++)
+			for (var i = 0; i < deviceCount; i++)
 			{
 				var device = devices[i] as UnityInputDevice;
 				if (device != null)

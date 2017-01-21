@@ -1,10 +1,10 @@
 ﻿#if UNITY_EDITOR
-using UnityEditor;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using UnityEditor;
+	using UnityEngine;
+
+
 	internal class TouchBuilder
 	{
 		[MenuItem( "GameObject/Create Other/InControl/Touch/Manager", false, 2 )]

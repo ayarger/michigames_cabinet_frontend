@@ -1,16 +1,24 @@
 ﻿//#define UNITY_XBOXONE
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+
 
 #if UNITY_XBOXONE
+// If you're getting a compilation error about the type or namespace 'Gamepad' being missing,
+// you need to install gamepad.dll which can be found in the Unity Xbox Forums:
+// > Build Downloads (Sticky Topic)
+// > Latest Builds
+// > Unity's Xbox One Native Plugins
+// Gamepad.dll can be found in Binaries\Native\Variations\Durango_Release
+// Put it in Assets/Plugins/XboxOne. Use the plugin inspector (when you click on the gamepad.dll) 
+// to make sure it is set to only be activated on Xbox One.
 using Gamepad;
 #endif
 
 
 namespace InControl
 {
+	using UnityEngine;
+
+
 	public class XboxOneInputDevice : InputDevice
 	{
 		const uint AnalogLeftStickX = 0;
@@ -37,9 +45,9 @@ namespace InControl
 			SortOrder = (int) joystickId;
 			Meta = "Xbox One Device #" + joystickId;
 
-			#if UNITY_XBOXONE
+#if UNITY_XBOXONE
 			ControllerId = XboxOneInput.GetControllerId( joystickId );
-			#endif
+#endif
 
 			AddControl( InputControlType.LeftStickLeft, "Left Stick Left", LowerDeadZone, UpperDeadZone );
 			AddControl( InputControlType.LeftStickRight, "Left Stick Right", LowerDeadZone, UpperDeadZone );
@@ -76,7 +84,7 @@ namespace InControl
 
 		public override void Update( ulong updateTick, float deltaTime )
 		{
-			#if UNITY_XBOXONE
+#if UNITY_XBOXONE
 			var lsv = new Vector2( GetAnalogValue( AnalogLeftStickX ), -GetAnalogValue( AnalogLeftStickY ) );
 			UpdateLeftStickWithValue( lsv, updateTick, deltaTime );
 
@@ -106,11 +114,11 @@ namespace InControl
 			UpdateWithState( InputControlType.Menu, GetButtonState( XboxOneKeyCode.GamepadButtonMenu ), updateTick, deltaTime );
 
 			Commit( updateTick, deltaTime );
-			#endif
+#endif
 		}
 
 
-		#if UNITY_XBOXONE
+#if UNITY_XBOXONE
 		XboxOneKeyCode GetButtonKeyCode( XboxOneKeyCode keyCode )
 		{
 			const int offset = XboxOneKeyCode.Gamepad2ButtonA - XboxOneKeyCode.Gamepad1ButtonA;
@@ -128,35 +136,35 @@ namespace InControl
 		{
 			return Input.GetAxisRaw( "joystick " + JoystickId + " analog " + analogId );
 		}
-		#endif
+#endif
 
 
 		public bool IsConnected
 		{
 			get
-			{ 
-				#if UNITY_XBOXONE
-				return XboxOneInput.IsGamepadActive( JoystickId ); 
-				#else
+			{
+#if UNITY_XBOXONE
+				return XboxOneInput.IsGamepadActive( JoystickId );
+#else
 				return false;
-				#endif
+#endif
 			}
 		}
 
 
 		public override void Vibrate( float leftMotor, float rightMotor )
 		{
-			#if UNITY_XBOXONE
-			GamepadPlugin.SetGamepadVibration( ControllerId, leftMotor, rightMotor, leftMotor, rightMotor );
-			#endif
+#if UNITY_XBOXONE
+			GamepadPlugin.SetGamepadVibration( ControllerId, leftMotor, rightMotor, 0, 0 );
+#endif
 		}
 
 
 		public void Vibrate( float leftMotor, float rightMotor, float leftTrigger, float rightTrigger )
 		{
-			#if UNITY_XBOXONE
+#if UNITY_XBOXONE
 			GamepadPlugin.SetGamepadVibration( ControllerId, leftMotor, rightMotor, leftTrigger, rightTrigger );
-			#endif
+#endif
 		}
 	}
 }

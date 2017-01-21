@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-
 namespace InControl
 {
 	public class NativeInputDeviceProfile : InputDeviceProfile
@@ -35,8 +30,8 @@ namespace InControl
 		{
 			if (Matchers != null)
 			{
-				int matchersCount = Matchers.Length;
-				for (int i = 0; i < matchersCount; i++)
+				var matchersCount = Matchers.Length;
+				for (var i = 0; i < matchersCount; i++)
 				{
 					if (Matchers[i].Matches( deviceInfo ))
 					{

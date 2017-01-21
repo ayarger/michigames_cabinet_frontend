@@ -1,11 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using UnityEngine;
-
-
-namespace InControl
+﻿namespace InControl
 {
+	using System.IO;
+	using UnityEngine;
+
 
 	public class DeviceBindingSource : BindingSource
 	{

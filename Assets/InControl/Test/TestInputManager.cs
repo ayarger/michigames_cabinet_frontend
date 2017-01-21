@@ -1,17 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using UnityEngine;
-using InControl;
-
-//#if UNITY_EDITOR
-//using UnityEditor;
-//#endif
-
-
 /**
  * WARNING: This is NOT an example of how to use InControl.
  * It is intended for testing and troubleshooting the library.
@@ -22,6 +8,11 @@ using InControl;
 
 namespace InControl
 {
+	using System;
+	using System.Collections.Generic;
+	using UnityEngine;
+
+
 	public class TestInputManager : MonoBehaviour
 	{
 		public Font font;
@@ -38,7 +29,7 @@ namespace InControl
 
 			Logger.OnLogMessage += logMessage => logMessages.Add( logMessage );
 
-			//			InputManager.HideDevicesWithProfile( typeof( Xbox360MacProfile ) );
+			//InputManager.HideDevicesWithProfile( typeof( Xbox360MacProfile ) );
 
 			InputManager.OnDeviceAttached += inputDevice => Debug.Log( "Attached: " + inputDevice.Name );
 			InputManager.OnDeviceDetached += inputDevice => Debug.Log( "Detached: " + inputDevice.Name );
@@ -46,7 +37,7 @@ namespace InControl
 
 			InputManager.OnUpdate += HandleInputUpdate;
 
-			//			UnityInputDeviceManager.DumpSystemDeviceProfiles();
+			//UnityInputDeviceManager.DumpSystemDeviceProfiles();
 		}
 
 
@@ -54,31 +45,31 @@ namespace InControl
 		{
 			CheckForPauseButton();
 
-			//			var inputDevice = InputManager.ActiveDevice;
-			//			if (inputDevice.Direction.Left.WasPressed)
-			//			{
-			//				Debug.Log( "Left.WasPressed" );
-			//			}
-			//			if (inputDevice.Direction.Left.WasReleased)
-			//			{
-			//				Debug.Log( "Left.WasReleased" );
-			//			}
-			//			if (inputDevice.Action1.WasPressed)
-			//			{
-			//				Debug.Log( "Action1.WasPressed" );
-			//			}
+			//var inputDevice = InputManager.ActiveDevice;
+			//if (inputDevice.Direction.Left.WasPressed)
+			//{
+			//	Debug.Log( "Left.WasPressed" );
+			//}
+			//if (inputDevice.Direction.Left.WasReleased)
+			//{
+			//	Debug.Log( "Left.WasReleased" );
+			//}
+			//if (inputDevice.Action1.WasPressed)
+			//{
+			//	Debug.Log( "Action1.WasPressed" );
+			//}
 
-			//			var inputDevice = InputManager.ActiveDevice;
-			//			var control = inputDevice.Action1;
-			//			if (control.WasReleased)
-			//			{
-			//				InputManager.ClearInputState();
-			//				Debug.Log( "WasPressed = " + control.WasPressed );
-			//				Debug.Log( "WasReleased = " + control.WasReleased );
-			//			}
+			//var inputDevice = InputManager.ActiveDevice;
+			//var control = inputDevice.Action1;
+			//if (control.WasReleased)
+			//{
+			//	InputManager.ClearInputState();
+			//	Debug.Log( "WasPressed = " + control.WasPressed );
+			//	Debug.Log( "WasReleased = " + control.WasReleased );
+			//}
 
 			var devicesCount = InputManager.Devices.Count;
-			for (int i = 0; i < devicesCount; i++)
+			for (var i = 0; i < devicesCount; i++)
 			{
 				var inputDevice = InputManager.Devices[i];
 				inputDevice.Vibrate( inputDevice.LeftTrigger, inputDevice.RightTrigger );
@@ -88,10 +79,10 @@ namespace InControl
 
 		void Start()
 		{
-			//			var unityDeviceManager = InputManager.GetDeviceManager<UnityInputDeviceManager>();
-			//			unityDeviceManager.ReloadDevices();
+			//var unityDeviceManager = InputManager.GetDeviceManager<UnityInputDeviceManager>();
+			//unityDeviceManager.ReloadDevices();
 
-			//			Debug.Log( "IntPtr.Size = " + IntPtr.Size );
+			//Debug.Log( "IntPtr.Size = " + IntPtr.Size );
 
 #if UNITY_IOS
 			ICadeDeviceManager.Active = true;
@@ -101,7 +92,7 @@ namespace InControl
 
 		void Update()
 		{
-			//			Thread.Sleep( 250 );
+			//Thread.Sleep( 250 );
 
 			if (Input.GetKeyDown( KeyCode.R ))
 			{
@@ -141,17 +132,10 @@ namespace InControl
 			GUI.skin.font = font;
 			SetColor( Color.white );
 
-			string info = "Devices:";
+			var info = "Devices:";
 			info += " (Platform: " + InputManager.Platform + ")";
-			//			info += " (Joysticks " + InputManager.JoystickHash + ")";
+			//info += " (Joysticks " + InputManager.JoystickHash + ")";
 			info += " " + InputManager.ActiveDevice.Direction.Vector;
-
-			//			#if UNITY_EDITOR
-			//			if (EditorWindow.focusedWindow != null)
-			//			{
-			//				info += " " + EditorWindow.focusedWindow.ToString();
-			//			}
-			//			#endif
 
 			if (isPaused)
 			{
@@ -165,8 +149,8 @@ namespace InControl
 
 			foreach (var inputDevice in InputManager.Devices)
 			{
-				bool deviceIsActive = InputManager.ActiveDevice == inputDevice;
-				Color color = deviceIsActive ? Color.yellow : Color.white;
+				var deviceIsActive = InputManager.ActiveDevice == inputDevice;
+				var color = deviceIsActive ? Color.yellow : Color.white;
 
 				y = 35;
 
@@ -295,19 +279,22 @@ namespace InControl
 			SetColor( Color.white );
 			x = 10;
 			y = Screen.height - (10 + lineHeight);
-			for (int i = logMessages.Count - 1; i >= 0; i--)
+			for (var i = logMessages.Count - 1; i >= 0; i--)
 			{
 				var logMessage = logMessages[i];
-				SetColor( logColors[(int) logMessage.type] );
-				foreach (var line in logMessage.text.Split( '\n' ))
+				if (logMessage.type != LogMessageType.Info)
 				{
-					GUI.Label( new Rect( x, y, Screen.width, y + 10 ), line, style );
-					y -= lineHeight;
+					SetColor( logColors[(int) logMessage.type] );
+					foreach (var line in logMessage.text.Split( '\n' ))
+					{
+						GUI.Label( new Rect( x, y, Screen.width, y + 10 ), line, style );
+						y -= lineHeight;
+					}
 				}
 			}
 
 
-			//			DrawUnityInputDebugger();
+			//DrawUnityInputDebugger();
 		}
 
 
@@ -330,7 +317,7 @@ namespace InControl
 				y += lineHeight;
 
 				var buttonInfo = "Buttons: ";
-				for (int button = 0; button < 20; button++)
+				for (var button = 0; button < 20; button++)
 				{
 					var buttonQuery = "joystick " + joystickId + " button " + button;
 					var buttonState = Input.GetKey( buttonQuery );
@@ -344,7 +331,7 @@ namespace InControl
 				y += lineHeight;
 
 				var analogInfo = "Analogs: ";
-				for (int analog = 0; analog < 20; analog++)
+				for (var analog = 0; analog < 20; analog++)
 				{
 					var analogQuery = "joystick " + joystickId + " analog " + analog;
 					var analogValue = Input.GetAxisRaw( analogQuery );
@@ -366,7 +353,7 @@ namespace InControl
 		void OnDrawGizmos()
 		{
 			var inputDevice = InputManager.ActiveDevice;
-			//			var vector = new Vector2( inputDevice.LeftStickX, inputDevice.LeftStickY );
+			//var vector = new Vector2( inputDevice.LeftStickX, inputDevice.LeftStickY );
 			var vector = inputDevice.Direction.Vector;
 
 			Gizmos.color = Color.blue;

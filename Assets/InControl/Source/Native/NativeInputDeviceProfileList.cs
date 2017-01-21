@@ -1,9 +1,8 @@
-using System;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using UnityEngine;
+
+
 	public class NativeInputDeviceProfileList : ScriptableObject
 	{
 		public static string[] Profiles = new string[] 
@@ -15,6 +14,8 @@ namespace InControl
 			"InControl.NativeProfile.EASportsControllerMacProfile",
 			"InControl.NativeProfile.GameStopControllerMacProfile",
 			"InControl.NativeProfile.GuitarHeroControllerMacProfile",
+			"InControl.NativeProfile.HORIRealArcadeProVKaiFightingStickMacProfile",
+			"InControl.NativeProfile.HORIRealArcadeProVXMacProfile",
 			"InControl.NativeProfile.HoriBlueSoloControllerMacProfile",
 			"InControl.NativeProfile.HoriControllerMacProfile",
 			"InControl.NativeProfile.HoriDOA4ArcadeStickMacProfile",
@@ -48,9 +49,6 @@ namespace InControl
 			"InControl.NativeProfile.MadCatzFPSProMacProfile",
 			"InControl.NativeProfile.MadCatzFightPadControllerMacProfile",
 			"InControl.NativeProfile.MadCatzFightPadMacProfile",
-			"InControl.NativeProfile.MadCatzFightPadNeoMacProfile",
-			"InControl.NativeProfile.MadCatzFightPadSCMacProfile",
-			"InControl.NativeProfile.MadCatzFightPadTE2MacProfile",
 			"InControl.NativeProfile.MadCatzMicroConControllerMacProfile",
 			"InControl.NativeProfile.MadCatzMicroControllerMacProfile",
 			"InControl.NativeProfile.MadCatzPortableDrumMacProfile",
@@ -66,13 +64,14 @@ namespace InControl
 			"InControl.NativeProfile.MicrosoftXboxControllerMacProfile",
 			"InControl.NativeProfile.MicrosoftXboxOneControllerMacProfile",
 			"InControl.NativeProfile.MicrosoftXboxOneEliteControllerMacProfile",
-			"InControl.NativeProfile.MortalKombatXbox360ControllerMacProfile",
 			"InControl.NativeProfile.NaconGC100XFControllerMacProfile",
 			"InControl.NativeProfile.PDPAfterglowControllerMacProfile",
 			"InControl.NativeProfile.PDPMarvelControllerMacProfile",
 			"InControl.NativeProfile.PDPTronControllerMacProfile",
 			"InControl.NativeProfile.PDPVersusControllerMacProfile",
+			"InControl.NativeProfile.PDPXboxOneArcadeStickMacProfile",
 			"InControl.NativeProfile.PDPXboxOneControllerMacProfile",
+			"InControl.NativeProfile.POWERAFUS1ONTournamentControllerMacProfile",
 			"InControl.NativeProfile.PowerAAirflowControllerMacProfile",
 			"InControl.NativeProfile.PowerAMiniControllerMacProfile",
 			"InControl.NativeProfile.PowerAMiniProExControllerMacProfile",
@@ -122,7 +121,9 @@ namespace InControl
 			"InControl.NativeProfile.XInputWindowsNativeProfile",
 			"InControl.NativeProfile.Xbox360WiredWindowsNativeProfile",
 			"InControl.NativeProfile.Xbox360WirelessWindowsNativeProfile",
+			"InControl.NativeProfile.XboxOneEliteWindows10AENativeProfile",
 			"InControl.NativeProfile.XboxOneEliteWindowsNativeProfile",
+			"InControl.NativeProfile.XboxOneWindows10AENativeProfile",
 			"InControl.NativeProfile.XboxOneWindows10NativeProfile",
 			"InControl.NativeProfile.XboxOneWindowsNativeProfile",
 		};

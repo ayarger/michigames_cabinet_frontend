@@ -1,11 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using System;
+	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
+	using UnityEngine;
+
+#if NETFX_CORE
+	using System.Reflection;
+#endif
+
+
 	public class InputManager
 	{
 		public static readonly VersionInfo Version = VersionInfo.InControlVersion();
@@ -131,7 +135,7 @@ namespace InControl
 			}
 
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR
-			if (EnableXInput)
+			if (EnableXInput && enableUnityInput)
 			{
 				XInputDeviceManager.Enable();
 			}
@@ -284,12 +288,12 @@ namespace InControl
 
 		static void SetZeroTickOnAllControls()
 		{
-			int deviceCount = devices.Count;
-			for (int i = 0; i < deviceCount; i++)
+			var deviceCount = devices.Count;
+			for (var i = 0; i < deviceCount; i++)
 			{
 				var controls = devices[i].Controls;
 				var controlCount = controls.Count;
-				for (int j = 0; j < controlCount; j++)
+				for (var j = 0; j < controlCount; j++)
 				{
 					var control = controls[j];
 					if (control != null)
@@ -309,14 +313,14 @@ namespace InControl
 		/// </summary>
 		public static void ClearInputState()
 		{
-			int deviceCount = devices.Count;
-			for (int i = 0; i < deviceCount; i++)
+			var deviceCount = devices.Count;
+			for (var i = 0; i < deviceCount; i++)
 			{
 				devices[i].ClearInputState();
 			}
 
-			int playerActionSetCount = playerActionSets.Count;
-			for (int i = 0; i < playerActionSetCount; i++)
+			var playerActionSetCount = playerActionSets.Count;
+			for (var i = 0; i < playerActionSetCount; i++)
 			{
 				playerActionSets[i].ClearInputState();
 			}
@@ -434,8 +438,8 @@ namespace InControl
 
 		static void UpdateDeviceManagers( float deltaTime )
 		{
-			int inputDeviceManagerCount = deviceManagers.Count;
-			for (int i = 0; i < inputDeviceManagerCount; i++)
+			var inputDeviceManagerCount = deviceManagers.Count;
+			for (var i = 0; i < inputDeviceManagerCount; i++)
 			{
 				deviceManagers[i].Update( currentTick, deltaTime );
 			}
@@ -444,8 +448,8 @@ namespace InControl
 
 		static void DestroyDeviceManagers()
 		{
-			int deviceManagerCount = deviceManagers.Count;
-			for (int i = 0; i < deviceManagerCount; i++)
+			var deviceManagerCount = deviceManagers.Count;
+			for (var i = 0; i < deviceManagerCount; i++)
 			{
 				deviceManagers[i].Destroy();
 			}
@@ -457,8 +461,8 @@ namespace InControl
 
 		static void DestroyDevices()
 		{
-			int deviceCount = devices.Count;
-			for (int i = 0; i < deviceCount; i++)
+			var deviceCount = devices.Count;
+			for (var i = 0; i < deviceCount; i++)
 			{
 				var device = devices[i];
 				device.OnDetached();
@@ -470,8 +474,8 @@ namespace InControl
 
 		static void UpdateDevices( float deltaTime )
 		{
-			int deviceCount = devices.Count;
-			for (int i = 0; i < deviceCount; i++)
+			var deviceCount = devices.Count;
+			for (var i = 0; i < deviceCount; i++)
 			{
 				var device = devices[i];
 				device.Update( currentTick, deltaTime );
@@ -486,8 +490,8 @@ namespace InControl
 
 		static void CommitDevices( float deltaTime )
 		{
-			int deviceCount = devices.Count;
-			for (int i = 0; i < deviceCount; i++)
+			var deviceCount = devices.Count;
+			for (var i = 0; i < deviceCount; i++)
 			{
 				var device = devices[i];
 				device.Commit( currentTick, deltaTime );
@@ -509,8 +513,8 @@ namespace InControl
 		{
 			var lastActiveDevice = ActiveDevice;
 
-			int deviceCount = devices.Count;
-			for (int i = 0; i < deviceCount; i++)
+			var deviceCount = devices.Count;
+			for (var i = 0; i < deviceCount; i++)
 			{
 				var inputDevice = devices[i];
 				if (inputDevice.LastChangedAfter( ActiveDevice ))
@@ -614,11 +618,7 @@ namespace InControl
 
 		internal static void AttachPlayerActionSet( PlayerActionSet playerActionSet )
 		{
-			if (playerActionSets.Contains( playerActionSet ))
-			{
-				Logger.LogWarning( "Player action set is already attached." );
-			}
-			else
+			if (!playerActionSets.Contains( playerActionSet ))
 			{
 				playerActionSets.Add( playerActionSet );
 			}
@@ -633,8 +633,8 @@ namespace InControl
 
 		internal static void UpdatePlayerActionSets( float deltaTime )
 		{
-			int playerActionSetCount = playerActionSets.Count;
-			for (int i = 0; i < playerActionSetCount; i++)
+			var playerActionSetCount = playerActionSets.Count;
+			for (var i = 0; i < playerActionSetCount; i++)
 			{
 				playerActionSets[i].Update( currentTick, deltaTime );
 			}

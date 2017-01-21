@@ -1,16 +1,17 @@
-﻿using System;
-using System.IO;
-using UnityEngine;
-
-
-namespace InControl
+﻿namespace InControl
 {
+	using System;
+	using System.IO;
+	using UnityEngine;
+
+
 	public class MouseBindingSource : BindingSource
 	{
 		public Mouse Control { get; protected set; }
 		public static float ScaleX = 0.05f;
 		public static float ScaleY = 0.05f;
 		public static float ScaleZ = 0.05f;
+		public static float JitterThreshold = 0.05f;
 
 
 		internal MouseBindingSource()

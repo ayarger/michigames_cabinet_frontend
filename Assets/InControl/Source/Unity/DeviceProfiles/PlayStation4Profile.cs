@@ -1,6 +1,3 @@
-using System;
-
-
 namespace InControl
 {
 	// @cond nodoc
@@ -9,8 +6,10 @@ namespace InControl
 	{
 		public PlayStation4Profile()
 		{
-			Name = "PlayStation 4 Controller";
-			Meta = "PlayStation 4 Controller on PlayStation 4";
+			string Registered = "\u00AE";  // Needed because unity doesn't compile the symbol nicely from code.
+
+			Name = "DUALSHOCK" + Registered + "4 wireless controller";
+			Meta = "DUALSHOCK" + Registered + "4 wireless controller on PlayStation" + Registered + "4 system";
 
 			IncludePlatforms = new[] {
 				"PS4"
@@ -22,105 +21,152 @@ namespace InControl
 
 			ButtonMappings = new[] {
 				new InputControlMapping {
-					Handle = "Cross",
+					Handle = "cross button",
 					Target = InputControlType.Action1,
 					Source = Button0
 				},
 				new InputControlMapping {
-					Handle = "Circle",
+					Handle = "circle button",
 					Target = InputControlType.Action2,
 					Source = Button1
 				},
 				new InputControlMapping {
-					Handle = "Square",
+					Handle = "square button",
 					Target = InputControlType.Action3,
 					Source = Button2
 				},
 				new InputControlMapping {
-					Handle = "Triangle",
+					Handle = "triangle button",
 					Target = InputControlType.Action4,
 					Source = Button3
 				},
 				new InputControlMapping {
-					Handle = "Left Bumper",
+					Handle = "L1 button",
 					Target = InputControlType.LeftBumper,
 					Source = Button4
 				},
 				new InputControlMapping {
-					Handle = "Right Bumper",
+					Handle = "R1 button",
 					Target = InputControlType.RightBumper,
 					Source = Button5
 				},
 				new InputControlMapping {
-					Handle = "Touchpad",
-					Target = InputControlType.TouchPadTap,
+					Handle = "touch pad button",
+					Target = InputControlType.TouchPadButton,
 					Source = Button6
 				},
 				new InputControlMapping {
-					Handle = "Options",
+					Handle = "OPTIONS button",
 					Target = InputControlType.Options,
 					Source = Button7
 				},
 				new InputControlMapping {
-					Handle = "Left Stick Button",
+					Handle = "L3 button",
 					Target = InputControlType.LeftStickButton,
 					Source = Button8
 				},
 				new InputControlMapping {
-					Handle = "Right Stick Button",
+					Handle = "R3 button",
 					Target = InputControlType.RightStickButton,
 					Source = Button9
-				},
-				new InputControlMapping {
-					Handle = "DPad Up",
-					Target = InputControlType.DPadUp,
-					Source = Button10
-				},
-				new InputControlMapping {
-					Handle = "DPad Right",
-					Target = InputControlType.DPadRight,
-					Source = Button11
-				},
-				new InputControlMapping {
-					Handle = "DPad Down",
-					Target = InputControlType.DPadDown,
-					Source = Button12
-				},
-				new InputControlMapping {
-					Handle = "DPad Left",
-					Target = InputControlType.DPadLeft,
-					Source = Button13
-				},
-				new InputControlMapping {
-					Handle = "TouchPad Button",
-					Target = InputControlType.TouchPadTap,
-					Source = Button6
-				},
+				}
 			};
 
 			AnalogMappings = new[] {
-				LeftStickLeftMapping( Analog0 ),
-				LeftStickRightMapping( Analog0 ),
-				LeftStickUpMapping( Analog1 ),
-				LeftStickDownMapping( Analog1 ),
-
-				RightStickLeftMapping( Analog3 ),
-				RightStickRightMapping( Analog3 ),
-				RightStickUpMapping( Analog4 ),
-				RightStickDownMapping( Analog4 ),
-
-				DPadLeftMapping( Analog5 ),
-				DPadRightMapping( Analog5 ),
-				DPadUpMapping2( Analog6 ),
-				DPadDownMapping2( Analog6 ),
+				new InputControlMapping {
+					Handle = "left stick left",
+					Target = InputControlType.LeftStickLeft,
+					Source = Analog0,
+					SourceRange = InputRange.ZeroToMinusOne,
+					TargetRange = InputRange.ZeroToOne
+				},
+				new InputControlMapping {
+					Handle = "left stick right",
+					Target = InputControlType.LeftStickRight,
+					Source = Analog0,
+					SourceRange = InputRange.ZeroToOne,
+					TargetRange = InputRange.ZeroToOne
+				},
+				new InputControlMapping {
+					Handle = "left stick up",
+					Target = InputControlType.LeftStickUp,
+					Source = Analog1,
+					SourceRange = InputRange.ZeroToMinusOne,
+					TargetRange = InputRange.ZeroToOne
+				},
+				new InputControlMapping {
+					Handle = "left stick down",
+					Target = InputControlType.LeftStickDown,
+					Source = Analog1,
+					SourceRange = InputRange.ZeroToOne,
+					TargetRange = InputRange.ZeroToOne
+				},
 
 				new InputControlMapping {
-					Handle = "Left Trigger",
+					Handle = "right stick left",
+					Target = InputControlType.RightStickLeft,
+					Source = Analog3,
+					SourceRange = InputRange.ZeroToMinusOne,
+					TargetRange = InputRange.ZeroToOne
+				},
+				new InputControlMapping {
+					Handle = "right stick right",
+					Target = InputControlType.RightStickRight,
+					Source = Analog3,
+					SourceRange = InputRange.ZeroToOne,
+					TargetRange = InputRange.ZeroToOne
+				},
+				new InputControlMapping {
+					Handle = "right stick up",
+					Target = InputControlType.RightStickUp,
+					Source = Analog4,
+					SourceRange = InputRange.ZeroToMinusOne,
+					TargetRange = InputRange.ZeroToOne
+				},
+				new InputControlMapping {
+					Handle = "right stick down",
+					Target = InputControlType.RightStickDown,
+					Source = Analog4,
+					SourceRange = InputRange.ZeroToOne,
+					TargetRange = InputRange.ZeroToOne
+				},
+
+				new InputControlMapping {
+					Handle = "left button",
+					Target = InputControlType.DPadLeft,
+					Source = Analog5,
+					SourceRange = InputRange.ZeroToMinusOne,
+					TargetRange = InputRange.ZeroToOne
+				},
+				new InputControlMapping {
+					Handle = "right button",
+					Target = InputControlType.DPadRight,
+					Source = Analog5,
+					SourceRange = InputRange.ZeroToOne,
+					TargetRange = InputRange.ZeroToOne
+				},
+				new InputControlMapping {
+					Handle = "up button",
+					Target = InputControlType.DPadUp,
+					Source = Analog6,
+					SourceRange = InputRange.ZeroToOne,
+					TargetRange = InputRange.ZeroToOne
+				},
+				new InputControlMapping {
+					Handle = "down button",
+					Target = InputControlType.DPadDown,
+					Source = Analog6,
+					SourceRange = InputRange.ZeroToMinusOne,
+					TargetRange = InputRange.ZeroToOne
+				},
+
+				new InputControlMapping {
+					Handle = "L2 button",
 					Target = InputControlType.LeftTrigger,
 					Source = Analog7,
 				},
 				new InputControlMapping {
-					Handle = "Right Trigger",
+					Handle = "R2 button",
 					Target = InputControlType.RightTrigger,
 					Source = Analog2,
 					Invert = true
@@ -130,4 +176,3 @@ namespace InControl
 	}
 	// @endcond
 }
-

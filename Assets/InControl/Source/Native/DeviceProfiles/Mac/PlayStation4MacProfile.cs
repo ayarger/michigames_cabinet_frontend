@@ -1,8 +1,5 @@
 ﻿namespace InControl.NativeProfile
 {
-	using System;
-
-
 	// @cond nodoc
 	public class PlayStation4MacProfile : NativeInputDeviceProfile
 	{
@@ -19,6 +16,10 @@
 				new NativeInputDeviceMatcher {
 					VendorID = 0x54c,
 					ProductID = 0x5c4,
+				},
+				new NativeInputDeviceMatcher {
+					VendorID = 0x54c,
+					ProductID = 0x9cc,
 				},
 			};
 
@@ -100,7 +101,7 @@
 				},
 				new InputControlMapping {
 					Handle = "Touchpad Button",
-					Target = InputControlType.TouchPadTap,
+					Target = InputControlType.TouchPadButton,
 					Source = Button( 13 )
 				}
 			};

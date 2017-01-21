@@ -1,9 +1,8 @@
-using System;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using UnityEngine;
+
+
 	public class UnityMouseButtonSource : InputControlSource
 	{
 		public int ButtonId;

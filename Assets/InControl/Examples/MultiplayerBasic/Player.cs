@@ -1,10 +1,9 @@
-using System;
-using UnityEngine;
-using InControl;
-
-
 namespace MultiplayerBasicExample
 {
+	using InControl;
+	using UnityEngine;
+
+
 	// This is just a simple "player" script that rotates and colors a cube
 	// based on input read from the device on its inputDevice field.
 	//

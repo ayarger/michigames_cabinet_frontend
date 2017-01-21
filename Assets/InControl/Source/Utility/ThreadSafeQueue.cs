@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-
-
-namespace InControl
+﻿namespace InControl
 {
-    internal class ThreadSafeQueue<T>
+	using System.Collections.Generic;
+
+
+	internal class ThreadSafeQueue<T>
     {
         object sync;
         Queue<T> data;
@@ -67,8 +65,8 @@ namespace InControl
         {
             lock (sync)
             {
-                int count = data.Count;
-                for (int i = 0; i < count; i++)
+                var count = data.Count;
+                for (var i = 0; i < count; i++)
                 {
                     list.Add(data.Dequeue());
                 }

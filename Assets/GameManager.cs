@@ -202,7 +202,7 @@ public class GameManager : MonoBehaviour {
         
     // Update is called once per frame
     void Update () {
-
+		
         //print ("watchdog: " + WatchdogManager.GetWatchdogTimer().ToString());
 
         if (_state == SelectorState.GRID)
@@ -211,8 +211,8 @@ public class GameManager : MonoBehaviour {
             ProcessConfirm ();
         else if (_state == SelectorState.TRANSITION)
             ProcessTransition ();
-        //else if (_state == SelectorState.IDLING)
-            //ProcessIdling ();
+        else if (_state == SelectorState.IDLING)
+            ProcessIdling ();
 
         var inputDevice = InputManager.ActiveDevice;
     }
@@ -260,6 +260,7 @@ public class GameManager : MonoBehaviour {
 			if (cell.game_info.game_title == "Credits")
 				return;
 			_state = SelectorState.CONFIRM;
+			StartCoroutine (short_rumble());
 			LaunchPanel.gameObject.SetActive (true);
 			if(cell.game_info.semester_or_event_code.Length == 3)
 				LaunchText1.text = "This game was created in EECS 494.";
@@ -276,6 +277,7 @@ public class GameManager : MonoBehaviour {
     void ProcessConfirm () {
 		if (Input.GetKeyDown (KeyCode.Return) || InputManager.ActiveDevice.Action1.WasPressed) {
             _state = SelectorState.TRANSITION;
+			StartCoroutine (short_rumble());
 			LaunchPanel.gameObject.SetActive (false);
 			TransitionPanel.gameObject.SetActive (true);
 		} else if (Input.GetKeyDown (KeyCode.Backspace) || InputManager.ActiveDevice.Action2.WasPressed) {
@@ -290,7 +292,7 @@ public class GameManager : MonoBehaviour {
                 //WatchdogManager.WatchdogCheckin ();
                 LaunchGame ();
                 transition_progress = 1.0f;
-                _state = SelectorState.IDLING;
+                
             }
         } else {
 			transition_progress += 0.01f * Time.deltaTime * 50;
@@ -299,14 +301,16 @@ public class GameManager : MonoBehaviour {
 
     void ProcessIdling() {
         // Monitor watchdog while the game plays.
-        bool should_terminate_game = WatchdogManager.GetWatchdogTimer() > WatchdogManager.GetWatchdogDuration();
-        if (should_terminate_game) {
-            if(!_game_process.HasExited)
-                _game_process.Kill ();
-        }
+        //bool should_terminate_game = WatchdogManager.GetWatchdogTimer() > WatchdogManager.GetWatchdogDuration();
+        //if (should_terminate_game) {
+		if (_game_process.HasExited) {
+			//_game_process.Kill ();
+			ReturnToSelector ();
+		}
+        //}
     }
 
-    void ReturnToSelector(object sender, EventArgs e) {
+    void ReturnToSelector() {
         print ("RETURNING TO SELECTOR!");
 		_state = SelectorState.GRID;
 		transition_progress = 0.0f;
@@ -336,8 +340,17 @@ public class GameManager : MonoBehaviour {
         cells [(int)current_cursor.y] [(int)current_cursor.x].is_selected = true;
         //print ("man: " + cells [(int)current_cursor.y] [(int)current_cursor.x].is_selected.ToString ());
 
+		StartCoroutine (short_rumble());
+
         RefreshUI ();
     }
+
+	IEnumerator short_rumble() {
+		InputDevice dev = InputManager.ActiveDevice;
+		dev.Vibrate (1.5f);
+		yield return new WaitForSeconds (0.1f);
+		dev.Vibrate (0.0f);
+	}
 
     void RefreshUI() {
         SelectableCell cell = cells [(int)current_cursor.y] [(int)current_cursor.x];
@@ -410,7 +423,8 @@ public class GameManager : MonoBehaviour {
         _game_process = Process.Start (exe_path);
         _game_process.EnableRaisingEvents = true;
         _game_process.PriorityBoostEnabled = true;
-        _game_process.Exited += ReturnToSelector;
+        //_game_process.Exited += ReturnToSelector;
+		_state = SelectorState.IDLING;
     }
 }
 

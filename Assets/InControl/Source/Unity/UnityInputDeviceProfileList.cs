@@ -1,9 +1,8 @@
-using System;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using UnityEngine;
+
+
 	public class UnityInputDeviceProfileList : ScriptableObject
 	{
 		public static string[] Profiles = new string[] 
@@ -110,6 +109,7 @@ namespace InControl
 			"InControl.Xbox360WinProfile",
 			"InControl.XboxOneMacProfile",
 			"InControl.XboxOneProfile",
+			"InControl.XboxOneWin10AEProfile",
 			"InControl.XboxOneWin10Profile",
 			"InControl.XboxOneWinProfile",
 		};

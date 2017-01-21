@@ -1,8 +1,5 @@
 namespace InControl.NativeProfile
 {
-	using System;
-
-
 	// @cond nodoc
 	[AutoDiscover]
 	public class AfterglowXbox360WindowsNativeProfile : NativeInputDeviceProfile

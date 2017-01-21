@@ -2,13 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 #if UNITY_EDITOR
-using UnityEngine;
-using UnityEditor;
-using System;
-
-
 namespace InControl.ReorderableList
 {
+	using System;
+	using UnityEditor;
+	using UnityEngine;
+
 
 	/// <summary>
 	/// Reorderable list adaptor for serialized array property.
@@ -39,7 +38,7 @@ namespace InControl.ReorderableList
 		/// <returns>
 		/// Serialized property wrapper for array element.
 		/// </returns>
-		public SerializedProperty this[ int index ]
+		public SerializedProperty this[int index]
 		{
 			get { return _arrayProperty.GetArrayElementAtIndex( index ); }
 		}
@@ -161,38 +160,38 @@ namespace InControl.ReorderableList
 		{
 			switch (element.type)
 			{
-				case "string":
-					element.stringValue = "";
-					break;
-				case "Vector2f":
-					element.vector2Value = Vector2.zero;
-					break;
-				case "Vector3f":
-					element.vector3Value = Vector3.zero;
-					break;
-				case "Rectf":
-					element.rectValue = new Rect();
-					break;
-				case "Quaternionf":
-					element.quaternionValue = Quaternion.identity;
-					break;
-				case "int":
-					element.intValue = 0;
-					break;
-				case "float":
-					element.floatValue = 0f;
-					break;
-				case "UInt8":
-					element.boolValue = false;
-					break;
-				case "ColorRGBA":
-					element.colorValue = Color.black;
-					break;
+			case "string":
+				element.stringValue = "";
+				break;
+			case "Vector2f":
+				element.vector2Value = Vector2.zero;
+				break;
+			case "Vector3f":
+				element.vector3Value = Vector3.zero;
+				break;
+			case "Rectf":
+				element.rectValue = new Rect();
+				break;
+			case "Quaternionf":
+				element.quaternionValue = Quaternion.identity;
+				break;
+			case "int":
+				element.intValue = 0;
+				break;
+			case "float":
+				element.floatValue = 0f;
+				break;
+			case "UInt8":
+				element.boolValue = false;
+				break;
+			case "ColorRGBA":
+				element.colorValue = Color.black;
+				break;
 
-				default:
-					if (element.type.StartsWith( "PPtr" ))
-						element.objectReferenceValue = null;
-					break;
+			default:
+				if (element.type.StartsWith( "PPtr" ))
+					element.objectReferenceValue = null;
+				break;
 			}
 		}
 

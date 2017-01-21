@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using System;
+	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
+	using System.IO;
+	using UnityEngine;
+
+
 	/// <summary>
 	/// An action set represents a set of actions, usually for a single player. This class must be subclassed to be used.
 	/// An action set can contain both explicit, bindable single value actions (for example, "Jump", "Left" and "Right") and implicit,
@@ -44,14 +44,30 @@ namespace InControl
 		public ulong UpdateTick { get; protected set; }
 
 		/// <summary>
-		/// The binding source type that provided input to this action set.
+		/// The binding source type that last provided input to this action set.
 		/// </summary>
 		public BindingSourceType LastInputType = BindingSourceType.None;
+
+		/// <summary>
+		/// Occurs when the binding source type that last provided input to this action set changes.
+		/// </summary>
+		public event Action<BindingSourceType> OnLastInputTypeChanged;
+
+		/// <summary>
+		/// Updated when <see cref="LastInputType"/> changes.
+		/// </summary>
+		public ulong LastInputTypeChangedTick;
 
 		/// <summary>
 		/// Whether this action set should produce input. Default: <c>true</c>
 		/// </summary>
 		public bool Enabled { get; set; }
+
+
+		/// <summary>
+		/// This property can be used to store whatever arbitrary game data you want on this action set.
+		/// </summary>
+		public object UserData { get; set; }
 
 
 		List<PlayerAction> actions = new List<PlayerAction>();
@@ -79,6 +95,7 @@ namespace InControl
 		/// </summary>
 		public void Destroy()
 		{
+			OnLastInputTypeChanged = null;
 			InputManager.DetachPlayerActionSet( this );
 		}
 
@@ -148,7 +165,7 @@ namespace InControl
 
 
 		/// <summary>
-		/// Gets the action with the specified action name. If the action does not exist, <c>null</c> is returned.
+		/// Gets the action with the specified action name. If the action does not exist, <c>KeyNotFoundException</c> is thrown.
 		/// </summary>
 		/// <param name="actionName">The name of the action to get.</param>
 		public PlayerAction this[string actionName]
@@ -165,12 +182,30 @@ namespace InControl
 		}
 
 
+		/// <summary>
+		/// Gets the action with the specified action name. If the action does not exist, it returns <c>null</c>.
+		/// </summary>
+		/// <param name="actionName">The name of the action to get.</param>
+		public PlayerAction GetPlayerActionByName( string actionName )
+		{
+			PlayerAction action;
+			if (actionsByName.TryGetValue( actionName, out action ))
+			{
+				return action;
+			}
+			return null;
+		}
+
+
 		internal void Update( ulong updateTick, float deltaTime )
 		{
 			var device = Device ?? FindActiveDevice();
 
+			var lastInputType = LastInputType;
+			var lastInputTypeChangedTick = LastInputTypeChangedTick;
+
 			var actionsCount = actions.Count;
-			for (int i = 0; i < actionsCount; i++)
+			for (var i = 0; i < actionsCount; i++)
 			{
 				var action = actions[i];
 
@@ -179,20 +214,38 @@ namespace InControl
 				if (action.UpdateTick > UpdateTick)
 				{
 					UpdateTick = action.UpdateTick;
-					LastInputType = action.LastInputType;
+				}
+
+				if (action.LastInputTypeChangedTick > lastInputTypeChangedTick)
+				{
+					lastInputType = action.LastInputType;
+					lastInputTypeChangedTick = action.LastInputTypeChangedTick;
 				}
 			}
 
 			var oneAxisActionsCount = oneAxisActions.Count;
-			for (int i = 0; i < oneAxisActionsCount; i++)
+			for (var i = 0; i < oneAxisActionsCount; i++)
 			{
 				oneAxisActions[i].Update( updateTick, deltaTime );
 			}
 
 			var twoAxisActionsCount = twoAxisActions.Count;
-			for (int i = 0; i < twoAxisActionsCount; i++)
+			for (var i = 0; i < twoAxisActionsCount; i++)
 			{
 				twoAxisActions[i].Update( updateTick, deltaTime );
+			}
+
+			if (lastInputTypeChangedTick > LastInputTypeChangedTick)
+			{
+				var triggerEvent = lastInputType != LastInputType;
+
+				LastInputType = lastInputType;
+				LastInputTypeChangedTick = lastInputTypeChangedTick;
+
+				if (OnLastInputTypeChanged != null && triggerEvent)
+				{
+					OnLastInputTypeChanged.Invoke( lastInputType );
+				}
 			}
 		}
 
@@ -203,7 +256,7 @@ namespace InControl
 		public void Reset()
 		{
 			var actionCount = actions.Count;
-			for (int i = 0; i < actionCount; i++)
+			for (var i = 0; i < actionCount; i++)
 			{
 				actions[i].ResetBindings();
 			}
@@ -218,8 +271,8 @@ namespace InControl
 			if (hasIncludeDevices || hasExcludeDevices)
 			{
 				var foundDevice = InputDevice.Null;
-				int deviceCount = InputManager.Devices.Count;
-				for (int i = 0; i < deviceCount; i++)
+				var deviceCount = InputManager.Devices.Count;
+				for (var i = 0; i < deviceCount; i++)
 				{
 					var device = InputManager.Devices[i];
 					if (device != foundDevice && device.LastChangedAfter( foundDevice ))
@@ -245,19 +298,19 @@ namespace InControl
 		public void ClearInputState()
 		{
 			var actionsCount = actions.Count;
-			for (int i = 0; i < actionsCount; i++)
+			for (var i = 0; i < actionsCount; i++)
 			{
 				actions[i].ClearInputState();
 			}
 
 			var oneAxisActionsCount = oneAxisActions.Count;
-			for (int i = 0; i < oneAxisActionsCount; i++)
+			for (var i = 0; i < oneAxisActionsCount; i++)
 			{
 				oneAxisActions[i].ClearInputState();
 			}
 
 			var twoAxisActionsCount = twoAxisActions.Count;
-			for (int i = 0; i < twoAxisActionsCount; i++)
+			for (var i = 0; i < twoAxisActionsCount; i++)
 			{
 				twoAxisActions[i].ClearInputState();
 			}
@@ -272,7 +325,7 @@ namespace InControl
 			}
 
 			var actionsCount = actions.Count;
-			for (int i = 0; i < actionsCount; i++)
+			for (var i = 0; i < actionsCount; i++)
 			{
 				if (actions[i].HasBinding( binding ))
 				{
@@ -292,7 +345,7 @@ namespace InControl
 			}
 
 			var actionsCount = actions.Count;
-			for (int i = 0; i < actionsCount; i++)
+			for (var i = 0; i < actionsCount; i++)
 			{
 				actions[i].FindAndRemoveBinding( binding );
 			}
@@ -340,7 +393,7 @@ namespace InControl
 					// Write actions.
 					var actionCount = actions.Count;
 					writer.Write( actionCount );
-					for (int i = 0; i < actionCount; i++)
+					for (var i = 0; i < actionCount; i++)
 					{
 						actions[i].Save( writer );
 					}
@@ -379,7 +432,7 @@ namespace InControl
 						}
 
 						var actionCount = reader.ReadInt32();
-						for (int i = 0; i < actionCount; i++)
+						for (var i = 0; i < actionCount; i++)
 						{
 							PlayerAction action;
 							if (actionsByName.TryGetValue( reader.ReadString(), out action ))

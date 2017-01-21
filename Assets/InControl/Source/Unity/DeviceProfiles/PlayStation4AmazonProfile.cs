@@ -1,6 +1,3 @@
-using System;
-
-
 namespace InControl
 {
 	// @cond nodoc
@@ -63,7 +60,7 @@ namespace InControl
 				},
 				new InputControlMapping {
 					Handle = "TouchPad Button",
-					Target = InputControlType.TouchPadTap,
+					Target = InputControlType.TouchPadButton,
 					Source = Button11
 				},
 				new InputControlMapping {

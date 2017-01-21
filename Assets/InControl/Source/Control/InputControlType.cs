@@ -1,8 +1,8 @@
-using System;
-
-
 namespace InControl
 {
+	using System;
+
+
 	/// <summary>
 	/// An enumeration of input controls.
 	/// This includes both the standardized set of controls and a variety 
@@ -89,8 +89,12 @@ namespace InControl
 		TiltY,
 		TiltZ,
 		ScrollWheel,
+
+		[Obsolete( "Use InputControlType.TouchPadButton instead.", true )]
 		TouchPadTap,
+
 		TouchPadButton,
+
 		TouchPadXAxis,
 		TouchPadYAxis,
 

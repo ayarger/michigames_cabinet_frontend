@@ -1,10 +1,8 @@
-using System;
-using System.IO;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using System.IO;
+
+
 	public class KeyBindingSource : BindingSource
 	{
 		public KeyCombo Control { get; protected set; }

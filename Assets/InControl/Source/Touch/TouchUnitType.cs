@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-
-
-namespace InControl
+﻿namespace InControl
 {
 	public enum TouchUnitType : int
 	{

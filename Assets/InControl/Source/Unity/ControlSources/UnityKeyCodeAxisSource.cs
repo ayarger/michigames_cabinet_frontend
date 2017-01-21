@@ -1,9 +1,8 @@
-using System;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using UnityEngine;
+
+
 	public class UnityKeyCodeAxisSource : InputControlSource
 	{
 		public KeyCode NegativeKeyCode;
@@ -24,7 +23,7 @@ namespace InControl
 
 		public float GetValue( InputDevice inputDevice )
 		{
-			int axisValue = 0;
+			var axisValue = 0;
 			
 			if (Input.GetKey( NegativeKeyCode ))
 			{

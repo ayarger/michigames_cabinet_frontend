@@ -1,8 +1,5 @@
 ﻿namespace InControl.NativeProfile
 {
-	using System;
-
-
 	// @cond nodoc
 	public class PlayStation3MacProfile : NativeInputDeviceProfile
 	{

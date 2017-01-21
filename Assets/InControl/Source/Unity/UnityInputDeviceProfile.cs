@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using System;
+	using System.Linq;
+	using System.Text.RegularExpressions;
+	using UnityEngine;
+
+
 	public sealed class AutoDiscover : Attribute
 	{
 	}
@@ -68,7 +67,7 @@ namespace InControl
 
 			if (JoystickRegex != null)
 			{
-				for (int i = 0; i < JoystickRegex.Length; i++)
+				for (var i = 0; i < JoystickRegex.Length; i++)
 				{
 					if (Regex.IsMatch( joystickName, JoystickRegex[i], RegexOptions.IgnoreCase ))
 					{

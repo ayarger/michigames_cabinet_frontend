@@ -1,13 +1,11 @@
 ﻿#if UNITY_IOS || UNITY_EDITOR
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using System.Collections.Generic;
+	using System.Threading;
+	using UnityEngine;
+
+
 	public class ICadeDeviceManager : InputDeviceManager
 	{
 		InputDevice device;

@@ -1,7 +1,3 @@
-using System;
-using UnityEngine;
-
-
 namespace InControl
 {
 	public class InputControl : OneAxisInputControl
@@ -48,8 +44,8 @@ namespace InControl
 
 
 		internal void SetZeroTick()
-		{ 
-			zeroTick = UpdateTick; 
+		{
+			zeroTick = UpdateTick;
 		}
 
 

@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections;
-using System.IO;
-using UnityEngine;
+namespace InControl
+{
+	using System;
+	using System.IO;
+	using UnityEngine;
 
 #if NETFX_CORE
-using Windows.Storage;
-using Windows.Storage.Streams;
-using System.Threading.Tasks;
+	using Windows.Storage;
+	using Windows.Storage.Streams;
+	using System.Threading.Tasks;
 #endif
 
 
-namespace InControl
-{
 	public static class Utility
 	{
 		public const float Epsilon = 1.0e-7f;
@@ -50,7 +49,7 @@ namespace InControl
 		{
 			var p = (circleVertexList[0] * radius) + center;
 			var c = circleVertexList.Length;
-			for (int i = 1; i < c; i++)
+			for (var i = 1; i < c; i++)
 			{
 				Gizmos.DrawLine( p, p = (circleVertexList[i] * radius) + center );
 			}
@@ -69,7 +68,7 @@ namespace InControl
 			var r = size / 2.0f;
 			var p = Vector2.Scale( circleVertexList[0], r ) + center;
 			var c = circleVertexList.Length;
-			for (int i = 1; i < c; i++)
+			for (var i = 1; i < c; i++)
 			{
 				Gizmos.DrawLine( p, p = Vector2.Scale( circleVertexList[i], r ) + center );
 			}
@@ -259,13 +258,15 @@ namespace InControl
 		// TODO: This meaningless distinction should probably be removed entirely.
 		internal static bool TargetIsButton( InputControlType target )
 		{
-			return (target >= InputControlType.Action1 && target <= InputControlType.Action12) || (target >= InputControlType.Button0 && target <= InputControlType.Button19);
+			return (target >= InputControlType.Action1 && target <= InputControlType.Action12) ||
+				   (target >= InputControlType.Button0 && target <= InputControlType.Button19);
 		}
 
 
 		internal static bool TargetIsStandard( InputControlType target )
 		{
-			return target >= InputControlType.LeftStickUp && target <= InputControlType.RightBumper;
+			return (target >= InputControlType.LeftStickUp && target <= InputControlType.Action12) ||
+				   (target >= InputControlType.Command && target <= InputControlType.DPadY);
 		}
 
 
@@ -275,7 +276,7 @@ namespace InControl
 		}
 
 
-		#if NETFX_CORE
+#if NETFX_CORE
 		public static async Task<string> Async_ReadFromFile( string path )
 		{
 			string name = Path.GetFileName( path );
@@ -293,32 +294,32 @@ namespace InControl
 			StorageFile file = await folder.CreateFileAsync( name, CreationCollisionOption.ReplaceExisting );
 		    await FileIO.WriteTextAsync( file, data );
 		}
-		#endif
+#endif
 
 
 		public static string ReadFromFile( string path )
 		{
-			#if NETFX_CORE
+#if NETFX_CORE
 			return Async_ReadFromFile( path ).Result;
-			#else
+#else
 			var streamReader = new StreamReader( path );
 			var data = streamReader.ReadToEnd();
 			streamReader.Close();
 			return data;
-			#endif
+#endif
 		}
 
 
 		public static void WriteToFile( string path, string data )
 		{
-			#if NETFX_CORE
+#if NETFX_CORE
 			Async_WriteToFile( path, data ).Wait();
-			#else
+#else
 			var streamWriter = new StreamWriter( path );
 			streamWriter.Write( data );
 			streamWriter.Flush();
 			streamWriter.Close();
-			#endif
+#endif
 		}
 
 
@@ -440,6 +441,41 @@ namespace InControl
 		}
 
 
+		public static void ArrayResize<T>( ref T[] array, int capacity )
+		{
+			if (array == null || capacity > array.Length)
+			{
+				Array.Resize( ref array, NextPowerOfTwo( capacity ) );
+			}
+		}
+
+
+		public static void ArrayExpand<T>( ref T[] array, int capacity )
+		{
+			if (array == null || capacity > array.Length)
+			{
+				array = new T[NextPowerOfTwo( capacity )];
+			}
+		}
+
+
+		public static int NextPowerOfTwo( int value )
+		{
+			if (value > 0)
+			{
+				value--;
+				value |= value >> 1;
+				value |= value >> 2;
+				value |= value >> 4;
+				value |= value >> 8;
+				value |= value >> 16;
+				value++;
+				return value;
+			}
+			return 0;
+		}
+
+
 		internal static bool Is32Bit
 		{
 			get
@@ -458,7 +494,7 @@ namespace InControl
 		}
 
 
-		#if !NETFX_CORE && !UNITY_WEBPLAYER && !UNITY_EDITOR_OSX && (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+#if !NETFX_CORE && !UNITY_WEBPLAYER && !UNITY_EDITOR_OSX && (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
 		public static string HKLM_GetString( string path, string key )
 		{
 			try
@@ -483,32 +519,44 @@ namespace InControl
 			{
 				var version = HKLM_GetString( @"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CSDVersion" );
 				var bitSize = Is32Bit ? "32Bit" : "64Bit";
-				return product + (version != null ? " " + version : "") + " " + bitSize;
+				var buildNumber = GetSystemBuildNumber();
+				return product + (version != null ? " " + version : "") + " " + bitSize + " Build " + buildNumber;
 			}
 			return SystemInfo.operatingSystem;
 		}
-		#endif
+
+
+		public static int GetSystemBuildNumber()
+		{
+			return Environment.OSVersion.Version.Build;
+		}
+#else
+		public static int GetSystemBuildNumber()
+		{
+			return 0;
+		}
+#endif
 
 
 		internal static void LoadScene( string sceneName )
 		{
-			#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
+#if UNITY_4_6 || UNITY_4_7 || UNITY_5_0 || UNITY_5_1 || UNITY_5_2
 			Application.LoadLevel( sceneName );
-			#else
+#else
 			UnityEngine.SceneManagement.SceneManager.LoadScene( sceneName );
-			#endif
+#endif
 		}
 
 
 		internal static string PluginFileExtension()
 		{
-			#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 			return ".bundle";
-			#elif UNITY_EDITOR_LINUX || UNITY_STANDALONE_LINUX
+#elif UNITY_EDITOR_LINUX || UNITY_STANDALONE_LINUX
 			return ".dylib";
-			#else
+#else
 			return ".dll";
-			#endif
+#endif
 		}
 	}
 }

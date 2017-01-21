@@ -47,7 +47,7 @@ namespace InControl.Internal
 
 			var lines = Regex.Split( code, @"\r?\n|\n" );
 			var linesCount = lines.Length;
-			for (int i = 0; i < linesCount; i++)
+			for (var i = 0; i < linesCount; i++)
 			{
 				var line = lines[i];
 

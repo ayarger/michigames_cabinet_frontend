@@ -1,10 +1,9 @@
-using System;
-using UnityEngine;
-using InControl;
-
-
 namespace TouchExample
 {
+	using InControl;
+	using UnityEngine;
+
+
 	public class CubeController : MonoBehaviour
 	{
 		Renderer cachedRenderer;
@@ -69,7 +68,7 @@ namespace TouchExample
 			var y = 10.0f;
 
 			var touchCount = TouchManager.TouchCount;
-			for (int i = 0; i < touchCount; i++)
+			for (var i = 0; i < touchCount; i++)
 			{
 				var touch = TouchManager.GetTouch( i );
 				GUI.Label( new Rect( 10, y, 500, y + 15.0f ), "" + i + ": fingerId = " + touch.fingerId + ", phase = " + touch.phase.ToString() + ", position = " + touch.position );

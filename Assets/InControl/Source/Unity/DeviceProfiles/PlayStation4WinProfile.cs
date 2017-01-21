@@ -1,6 +1,3 @@
-using System;
-
-
 namespace InControl
 {
 	// This profile works for connection over USB ONLY.
@@ -84,7 +81,7 @@ namespace InControl
 				},
 				new InputControlMapping {
 					Handle = "TouchPad Button",
-					Target = InputControlType.TouchPadTap,
+					Target = InputControlType.TouchPadButton,
 					Source = Button13
 				},
 			};

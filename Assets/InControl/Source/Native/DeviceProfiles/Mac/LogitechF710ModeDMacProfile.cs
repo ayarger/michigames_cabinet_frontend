@@ -1,8 +1,5 @@
 ﻿namespace InControl.NativeProfile
 {
-	using System;
-
-
 	// @cond nodoc
 	public class LogitechF710ModeDMacProfile : NativeInputDeviceProfile
 	{

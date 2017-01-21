@@ -1,13 +1,12 @@
 #if UNITY_EDITOR
-using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using UnityEditor;
-using UnityEngine;
-
-
 namespace InControl
 {
+	using System.Collections.Generic;
+	using System.Text.RegularExpressions;
+	using UnityEditor;
+	using UnityEngine;
+
+
 	[InitializeOnLoad]
 	internal class InputManagerAssetGenerator
 	{
@@ -369,7 +368,7 @@ namespace InControl
 				get
 				{
 					if (Regex.Match( name, @"^joystick \d+ analog \d+$" ).Success ||
-					    Regex.Match( name, @"^mouse (x|y|z)$" ).Success)
+						Regex.Match( name, @"^mouse (x|y|z)$" ).Success)
 					{
 						return true;
 					}

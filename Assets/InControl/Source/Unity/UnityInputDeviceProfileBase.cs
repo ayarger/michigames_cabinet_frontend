@@ -1,8 +1,4 @@
-﻿using System;
-using UnityEngine;
-
-
-namespace InControl
+﻿namespace InControl
 {
 	// TODO: This class should be folded right into UnityInputDeviceProfile once
 	// CustomInputDeviceProfile is finally removed.

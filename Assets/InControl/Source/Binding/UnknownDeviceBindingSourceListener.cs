@@ -1,8 +1,4 @@
-﻿using System;
-using UnityEngine;
-
-
-namespace InControl
+﻿namespace InControl
 {
 	public class UnknownDeviceBindingSourceListener : BindingSourceListener
 	{
@@ -29,7 +25,7 @@ namespace InControl
 		void TakeSnapshotOnUnknownDevices()
 		{
 			var deviceCount = InputManager.Devices.Count;
-			for (int i = 0; i < deviceCount; i++)
+			for (var i = 0; i < deviceCount; i++)
 			{
 				var device = InputManager.Devices[i];
 				if (device.IsUnknown)

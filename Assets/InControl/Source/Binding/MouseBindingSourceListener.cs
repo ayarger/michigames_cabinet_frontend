@@ -1,8 +1,4 @@
-﻿using System;
-using UnityEngine;
-
-
-namespace InControl
+﻿namespace InControl
 {
 	public class MouseBindingSourceListener : BindingSourceListener
 	{

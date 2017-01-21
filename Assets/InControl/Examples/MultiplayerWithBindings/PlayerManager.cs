@@ -1,11 +1,10 @@
-﻿using System;
-using UnityEngine;
-using System.Collections.Generic;
-using InControl;
-
-
-namespace MultiplayerWithBindingsExample
+﻿namespace MultiplayerWithBindingsExample
 {
+	using System.Collections.Generic;
+	using InControl;
+	using UnityEngine;
+
+
 	// This example iterates on the basic multiplayer example by using action sets with
 	// bindings to support both joystick and keyboard players. It would be a good idea
 	// to understand the basic multiplayer example first before looking a this one.
@@ -76,7 +75,7 @@ namespace MultiplayerWithBindingsExample
 		Player FindPlayerUsingJoystick( InputDevice inputDevice )
 		{
 			var playerCount = players.Count;
-			for (int i = 0; i < playerCount; i++)
+			for (var i = 0; i < playerCount; i++)
 			{
 				var player = players[i];
 				if (player.Actions.Device == inputDevice)
@@ -98,7 +97,7 @@ namespace MultiplayerWithBindingsExample
 		Player FindPlayerUsingKeyboard()
 		{
 			var playerCount = players.Count;
-			for (int i = 0; i < playerCount; i++)
+			for (var i = 0; i < playerCount; i++)
 			{
 				var player = players[i];
 				if (player.Actions == keyboardListener)

@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-
-
-namespace InControl
+﻿namespace InControl
 {
+	using UnityEngine;
+
+
 	public static class TouchUtility
 	{
 		public static Vector2 AnchorToViewPoint( TouchControlAnchor touchControlAnchor )

@@ -1,11 +1,10 @@
-﻿using System;
-using UnityEngine;
-using System.Collections.Generic;
-using InControl;
-
-
-namespace MultiplayerBasicExample
+﻿namespace MultiplayerBasicExample
 {
+	using System.Collections.Generic;
+	using InControl;
+	using UnityEngine;
+
+
 	// This example roughly illustrates the proper way to add multiple players from existing
 	// devices. Notice how InputManager.Devices is not used and no index into it is taken.
 	// Rather a device references are stored in each player and we use InputManager.OnDeviceDetached
@@ -75,7 +74,7 @@ namespace MultiplayerBasicExample
 		Player FindPlayerUsingDevice( InputDevice inputDevice )
 		{
 			var playerCount = players.Count;
-			for (int i = 0; i < playerCount; i++)
+			for (var i = 0; i < playerCount; i++)
 			{
 				var player = players[i];
 				if (player.Device == inputDevice)

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-
-namespace InControl
+﻿namespace InControl
 {
+	using System.Collections.Generic;
+	using UnityEngine;
+
+
 	public class XboxOneInputDeviceManager : InputDeviceManager
 	{
 		const int maxDevices = 8;
@@ -25,7 +23,7 @@ namespace InControl
 
 		public override void Update( ulong updateTick, float deltaTime )
 		{
-			for (int deviceIndex = 0; deviceIndex < maxDevices; deviceIndex++)
+			for (var deviceIndex = 0; deviceIndex < maxDevices; deviceIndex++)
 			{
 				var device = devices[deviceIndex] as XboxOneInputDevice;
 

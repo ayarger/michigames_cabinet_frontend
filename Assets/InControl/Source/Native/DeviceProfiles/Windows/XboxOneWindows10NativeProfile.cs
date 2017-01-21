@@ -1,8 +1,5 @@
 namespace InControl.NativeProfile
 {
-	using System;
-
-
 	// @cond nodoc
 	[AutoDiscover]
 	public class XboxOneWindows10NativeProfile : NativeInputDeviceProfile
@@ -21,6 +18,8 @@ namespace InControl.NativeProfile
 				"Windows 7",
 				"Windows 8"
 			};
+
+			MaxSystemBuildNumber = 14392;
 
 			Matchers = new[] {
 				new NativeInputDeviceMatcher {

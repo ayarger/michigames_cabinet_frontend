@@ -1,10 +1,9 @@
-using System;
-using UnityEngine;
-using InControl;
-
-
 namespace VirtualDeviceExample
 {
+	using InControl;
+	using UnityEngine;
+
+
 	// This example illustrates how to make a custom virtual controller for
 	// the purpose of feeding custom input into InControl.
 	//

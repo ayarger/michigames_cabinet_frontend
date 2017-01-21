@@ -1,8 +1,5 @@
 namespace InControl.NativeProfile
 {
-	using System;
-
-
 	// @cond nodoc
 	[AutoDiscover]
 	public class PlayStation4WindowsNativeProfile : NativeInputDeviceProfile
@@ -21,7 +18,10 @@ namespace InControl.NativeProfile
 				new NativeInputDeviceMatcher {
 					VendorID = 0x54c,
 					ProductID = 0x5c4,
-					// VersionNumber = 0x0,
+				},
+				new NativeInputDeviceMatcher {
+					VendorID = 0x54c,
+					ProductID = 0x9cc,
 				},
 			};
 
@@ -83,7 +83,7 @@ namespace InControl.NativeProfile
 				},
 				new InputControlMapping {
 					Handle = "Touch Pad Tap",
-					Target = InputControlType.TouchPadTap,
+					Target = InputControlType.TouchPadButton,
 					Source = Button( 13 ),
 				},
 			};

@@ -1,10 +1,9 @@
-﻿using System;
-using InControl;
-using UnityEngine;
-
-
-namespace BindingsExample
+﻿namespace BindingsExample
 {
+	using InControl;
+	using UnityEngine;
+
+
 	public class PlayerActions : PlayerActionSet
 	{
 		public PlayerAction Fire;
@@ -62,13 +61,12 @@ namespace BindingsExample
 
 			playerActions.ListenOptions.IncludeUnknownControllers = true;
 			playerActions.ListenOptions.MaxAllowedBindings = 4;
-//			playerActions.ListenOptions.MaxAllowedBindingsPerType = 1;
-//			playerActions.ListenOptions.UnsetDuplicateBindingsOnSet = true;
-//			playerActions.ListenOptions.IncludeMouseButtons = true;
-//			playerActions.ListenOptions.IncludeModifiersAsFirstClassKeys = true;
+			//playerActions.ListenOptions.MaxAllowedBindingsPerType = 1;
+			//playerActions.ListenOptions.UnsetDuplicateBindingsOnSet = true;
+			//playerActions.ListenOptions.IncludeMouseButtons = true;
+			//playerActions.ListenOptions.IncludeModifiersAsFirstClassKeys = true;
 
-			playerActions.ListenOptions.OnBindingFound = ( action, binding ) =>
-			{
+			playerActions.ListenOptions.OnBindingFound = ( action, binding ) => {
 				if (binding == new KeyBindingSource( Key.Escape ))
 				{
 					action.StopListeningForBinding();
@@ -77,13 +75,11 @@ namespace BindingsExample
 				return true;
 			};
 
-			playerActions.ListenOptions.OnBindingAdded += ( action, binding ) =>
-			{
+			playerActions.ListenOptions.OnBindingAdded += ( action, binding ) => {
 				Debug.Log( "Binding added... " + binding.DeviceName + ": " + binding.Name );
 			};
 
-			playerActions.ListenOptions.OnBindingRejected += ( action, binding, reason ) =>
-			{
+			playerActions.ListenOptions.OnBindingRejected += ( action, binding, reason ) => {
 				Debug.Log( "Binding rejected... " + reason );
 			};
 
