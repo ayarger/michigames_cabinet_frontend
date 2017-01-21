@@ -61,6 +61,12 @@ public class GameManager : MonoBehaviour {
 	public Text LaunchText1;
 	public Text LaunchText2;
 
+	public Color PinkColor;
+	public Color LemonColor;
+	public Color AquaColor;
+	public Color OrangeColor;
+	public Color SourAppleColor;
+
 	public Image TransitionPanel;
 
     Vector2 current_cursor = Vector2.zero;
@@ -131,9 +137,25 @@ public class GameManager : MonoBehaviour {
         new_game_info.trailer_video_path = "";
         new_game_info.semester_or_event_code = root["semester_or_event_code"];
         new_game_info.add_date = root["add_date"];
+		new_game_info.paper_color = GetColorFromColorName (root ["paper_color"]);
 
         game_infos.Add (new_game_info);
     }
+
+	Color GetColorFromColorName(string cn) {
+		if (cn == "pink")
+			return PinkColor;
+		if (cn == "lemon")
+			return LemonColor;
+		if (cn == "aqua")
+			return AquaColor;
+		if (cn == "orange")
+			return OrangeColor;
+		if (cn == "sour_apple")
+			return SourAppleColor;
+
+		return Color.white;
+	}
         
     // Use this for initialization
     void Start () {
@@ -387,6 +409,8 @@ public class GameManager : MonoBehaviour {
             credits_paper.SetActive(false);
         }
 
+		normal_paper.GetComponent<Image> ().color = cell.game_info.paper_color;
+
         Paper.Refresh();
     }
 
@@ -452,4 +476,5 @@ public class GameInfo {
     public string semester_or_event_code;
     public string add_date;
     public List<Texture2D> screenshots = new List<Texture2D>();
+	public Color paper_color;
 }

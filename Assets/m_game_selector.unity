@@ -4027,6 +4027,11 @@ MonoBehaviour:
   LaunchPanel: {fileID: 1992672962}
   LaunchText1: {fileID: 1651163236}
   LaunchText2: {fileID: 415029003}
+  PinkColor: {r: 1, g: 0.88235295, b: 0.9383367, a: 1}
+  LemonColor: {r: 1, g: 0.9882353, b: 0.5735294, a: 1}
+  AquaColor: {r: 0.7794118, g: 0.9452332, b: 1, a: 1}
+  OrangeColor: {r: 1, g: 0.88438135, b: 0.7794118, a: 1}
+  SourAppleColor: {r: 0.76450306, g: 1, b: 0.60294116, a: 1}
   TransitionPanel: {fileID: 2086141654}
   object_icon_prefab: {fileID: 1000013981388346, guid: 0965665aba398394f92e9cc4b2d78da5,
     type: 2}
