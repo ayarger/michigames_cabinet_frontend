@@ -62,6 +62,7 @@ public class ObjectIcon : MonoBehaviour {
 			transform.SetAsFirstSibling ();
 			selected_icon = this;
 		} else {
+
 			was_selected_last_frame = false;
 			transform.localScale += (Vector3.one - transform.localScale) * 0.2f;
 			//my_renderer.color = new Color (my_renderer.color.r, my_renderer.color.g, my_renderer.color.b, 0.3f);
