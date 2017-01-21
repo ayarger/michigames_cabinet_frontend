@@ -9,7 +9,7 @@ public class PreviewPanel : MonoBehaviour {
 	RawImage raw_image;
 	GameInfo current_game_info;
 
-	float screenshot_slideshow_duration = 4.0f;
+	float screenshot_slideshow_duration = 2.0f;
 	float screenshot_slideshow_previous_time;
 	int current_screenshot_index = 0;
 
