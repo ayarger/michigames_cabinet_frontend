@@ -342,8 +342,6 @@ public class GameManager : MonoBehaviour {
         if (x == 0 && y == 0)
             return;
 
-        AudioSource.PlayClipAtPoint (boop, transform.position);
-
         if (current_cursor.x + x >= cells [(int)current_cursor.y].Count)
             return;
         if (current_cursor.x + x < 0)
@@ -356,6 +354,8 @@ public class GameManager : MonoBehaviour {
             return;
         if (cells [(int)(current_cursor.y + y)] [(int)(current_cursor.x + x)] == null)
             return;
+
+		AudioSource.PlayClipAtPoint (boop, Camera.main.transform.position);
 
         ResetCells ();
         current_cursor += new Vector2 (x, y);
