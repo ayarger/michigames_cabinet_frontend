@@ -5,38 +5,55 @@ using System.Runtime.InteropServices;
 
 public class ForeGrounder : MonoBehaviour {
 
-	private const uint LOCK = 1;
-	private const uint UNLOCK = 2;
+    private const uint LOCK = 1;
+    private const uint UNLOCK = 2;
 
-	private IntPtr window;
+    private IntPtr window;
 
-	void Start() {
-		
-	}
+    float duration = 1.0f;
+    float previous_time;
 
-	void Update() {
-		LockSetForegroundWindow(LOCK);
-		window = GetActiveWindow();
-		StartCoroutine(Checker());
-	}
+    void Start() {
+        previous_time = Time.time;
+    }
 
-	IEnumerator Checker() {
-		while (true) {
+    void Update() {
+        if (Time.time - previous_time > duration)
+        {
+            previous_time = Time.time;
+            LockSetForegroundWindow(LOCK);
+            window = GetActiveWindow();
+            StartCoroutine(PerformWindowCheck());
+        }
+    }
 
-			yield return new WaitForSeconds(1);
-			IntPtr newWindow = GetActiveWindow();
+    /*IEnumerator Checker() {
+        while (true) {
 
-			if (window != newWindow) {
-				Debug.Log("Set to foreground");
-				SwitchToThisWindow(window, true);
-			}
-		}
-	}
+            yield return new WaitForSeconds(1);
+            IntPtr newWindow = GetActiveWindow();
 
-	[DllImport("user32.dll")]
-	static extern IntPtr GetActiveWindow();
-	[DllImport("user32.dll")]
-	static extern bool LockSetForegroundWindow(uint uLockCode);
-	[DllImport("user32.dll")]
-	static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
+            if (window != newWindow) {
+                SwitchToThisWindow(window, true);
+            }
+        }
+    }*/
+
+    IEnumerator PerformWindowCheck()
+    {
+        yield return new WaitForSeconds(1);
+        IntPtr newWindow = GetActiveWindow();
+
+        if (window != newWindow)
+        {
+            SwitchToThisWindow(window, true);
+        }
+    }
+
+    [DllImport("user32.dll")]
+    static extern IntPtr GetActiveWindow();
+    [DllImport("user32.dll")]
+    static extern bool LockSetForegroundWindow(uint uLockCode);
+    [DllImport("user32.dll")]
+    static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
 }
