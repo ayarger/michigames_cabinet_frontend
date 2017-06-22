@@ -39,10 +39,6 @@ public class PreviewPanel : MonoBehaviour {
 	}
 
 	void RefreshScreenshot() {
-        print("REFRESH: " + current_screenshot_index.ToString() + " COUNT: " + current_game_info.screenshots.Count.ToString());
-        foreach (Texture2D t in current_game_info.screenshots)
-            print(t.ToString());
-
 		if (current_game_info.screenshots.Count > current_screenshot_index)
 			raw_image.texture = current_game_info.screenshots [current_screenshot_index];
 		raw_image.color = new Color (raw_image.color.r, raw_image.color.g, raw_image.color.b, 1.0f);

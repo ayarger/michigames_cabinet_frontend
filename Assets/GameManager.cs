@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour {
     static GameManager _instance;
     public SelectorState _state = SelectorState.GRID;
     Process _game_process;
+    static float playtime = 0;
     public static SelectorState GetSelectorState() {
         return _instance._state;
     }
@@ -61,6 +62,8 @@ public class GameManager : MonoBehaviour {
 	public Text LaunchText1;
 	public Text LaunchText2;
 
+    public Text play_counter_text;
+
 	public Color PinkColor;
 	public Color LemonColor;
 	public Color AquaColor;
@@ -72,6 +75,8 @@ public class GameManager : MonoBehaviour {
     Vector2 current_cursor = Vector2.zero;
 
     public GameObject object_icon_prefab;
+
+    public static bool sent_report = false;
 
     void Init() {
 		string[] game_paths;
@@ -103,7 +108,6 @@ public class GameManager : MonoBehaviour {
 
         GameInfo new_game_info = new GameInfo ();
 
-        new_game_info.game_id = root ["game_id"].AsInt;
         new_game_info.game_title = root ["game_title"];
         new_game_info.genres = root ["genres"];
         new_game_info.dev_names = root ["developer_names"];
@@ -129,7 +133,7 @@ public class GameManager : MonoBehaviour {
             new_game_info.screenshots.Add(screen_tex);
         }
         print(screenshot_paths.Length);
-
+        new_game_info.game_id = root ["game_id"];
         new_game_info.logline = root ["logline"];
         new_game_info.max_number_players = root["max_number_players"].AsInt;
         new_game_info.min_number_players = root ["min_number_players"].AsInt;
@@ -138,7 +142,7 @@ public class GameManager : MonoBehaviour {
         new_game_info.semester_or_event_code = root["semester_or_event_code"];
         new_game_info.add_date = root["add_date"];
 		new_game_info.paper_color = GetColorFromColorName (root ["paper_color"]);
-
+        LoadPlayCounts(new_game_info);
         game_infos.Add (new_game_info);
     }
 
@@ -224,7 +228,8 @@ public class GameManager : MonoBehaviour {
         
     // Update is called once per frame
     void Update () {
-		
+
+        ConsiderSendingReport();
         //print ("watchdog: " + WatchdogManager.GetWatchdogTimer().ToString());
 
         if (_state == SelectorState.GRID)
@@ -237,6 +242,21 @@ public class GameManager : MonoBehaviour {
             ProcessIdling ();
 
         var inputDevice = InputManager.ActiveDevice;
+
+        playtime += Time.time;
+    }
+
+    void ConsiderSendingReport()
+    {
+        // Send report to server once we pass 11:45pm.
+        //if (DateTime.Now.TimeOfDay > new TimeSpan(23, 45, 0) && !sent_report)
+        //print(DateTime.Now.TimeOfDay);
+        //if (DateTime.Now.TimeOfDay > new TimeSpan(22, 13, 0) && !sent_report)
+        if (DateTime.Now.TimeOfDay > new TimeSpan(3, 41, 0) && !sent_report)
+        {
+            ReportToServer();
+            sent_report = true;
+        }
     }
 
     void EnforceResolution()
@@ -334,7 +354,9 @@ public class GameManager : MonoBehaviour {
 
     void ReturnToSelector() {
         print ("RETURNING TO SELECTOR!");
-		_state = SelectorState.GRID;
+        cells[(int)current_cursor.y][(int)current_cursor.x].game_info.playtime_sec_delta += (int)(playtime / 1000);
+        playtime = 0.0f;
+        _state = SelectorState.GRID;
 		transition_progress = 0.0f;
     }
 
@@ -412,6 +434,18 @@ public class GameManager : MonoBehaviour {
 		normal_paper.GetComponent<Image> ().color = cell.game_info.paper_color;
 
         Paper.Refresh();
+
+        // PlayCount
+        int total_play_count = 0;
+        for (int i = 0; i < cells.Count; i++)
+        {
+            for (int j = 0; j < cells[i].Count; j++)
+            {
+                total_play_count += cells[i][j].game_info.total_play_count;
+            }
+        }
+
+        play_counter_text.text = total_play_count.ToString();
     }
 
     string GetPlayerNumbersText(SelectableCell cell)
@@ -440,6 +474,7 @@ public class GameManager : MonoBehaviour {
             return;
         }
 
+        playtime = 0.0f;
         SelectableCell cell = cells [(int)current_cursor.y] [(int)current_cursor.x];
         string exe_path = Path.GetFullPath(cell.game_info.path_to_executable);
         print ("Launching: " + exe_path);
@@ -449,6 +484,89 @@ public class GameManager : MonoBehaviour {
         _game_process.PriorityBoostEnabled = true;
         //_game_process.Exited += ReturnToSelector;
 		_state = SelectorState.IDLING;
+        IncrementPlayCounter(cell.game_info);
+        SavePlayCounts();
+        RefreshUI();
+    }
+
+    void ReportToServer()
+    {
+        string json_data = GetReportJson();
+        print("REPORTING:::::::::::::::::::::::::::::");
+        print(json_data);
+        print("REPORTING2:::::::::::::::::::::::::::::");
+
+        WWWForm form = new WWWForm();
+        form.AddField("secret", "qLM1Top9MdanhipfCKBc");
+        form.AddField("data", json_data);
+
+        WWW request = new WWW("http://www.michigames.org/reporting/record_stats.php", form.data, form.headers);
+        StartCoroutine(WaitForWWW(request));
+    }
+
+    IEnumerator WaitForWWW(WWW www)
+    {
+        yield return www;
+
+        string txt = "";
+        if (string.IsNullOrEmpty(www.error))
+            txt = www.text;  //text of success
+        else
+            txt = www.error;  //error
+        print(txt);
+    }
+
+    string GetReportJson()
+    {
+        string result = "{\"game_deltas\":[";
+
+        List<GameInfo> valid_infos = new List<GameInfo>();
+        foreach (GameInfo gi in GameManager._instance.game_infos)
+            if (gi.play_count_delta > 0)
+                valid_infos.Add(gi);
+
+        for (int i = 0; i < valid_infos.Count; i++)
+        {
+            GameInfo info = valid_infos[i];
+
+            result += "{\"game_id\":" + info.game_id + ",";
+            result += "\"plays\":" + info.play_count_delta.ToString() + ",";
+            result += "\"playtime_sec\":" + info.playtime_sec_delta.ToString() + ",";
+            if(i == valid_infos.Count-1)
+                result += "\"rating\":" + "-1" + "}";
+            else
+                result += "\"rating\":" + "-1" + "},";
+        }
+
+        return result + "]}";
+    }
+
+    public static Dictionary<string, Dictionary<DateTime, int>> play_counts = new Dictionary<string, Dictionary<DateTime, int>>();
+    void SavePlayCounts()
+    {
+        for (int i = 0; i < cells.Count; i++)
+        {
+            for (int j = 0; j < cells[i].Count; j++)
+            {
+                string game_count_id = cells[i][j].game_info.GetPlayCountID();
+                Persistence.SetInt(game_count_id, cells[i][j].game_info.total_play_count);
+            }
+        }
+    }
+
+    void LoadPlayCounts(GameInfo gi)
+    {
+        string game_count_id = gi.GetPlayCountID();
+        int count = 0;
+        if(Persistence.HasKey(game_count_id))
+            count = Persistence.GetInt(game_count_id);
+        gi.total_play_count = count;
+    }
+
+    void IncrementPlayCounter(GameInfo gi)
+    {
+        gi.total_play_count ++;
+        gi.play_count_delta ++;
     }
 }
 
@@ -462,7 +580,7 @@ public class SelectableCell {
 
 [System.Serializable]
 public class GameInfo {
-    public int game_id;
+    public string game_id;
     public string game_title;
     public string logline;
     public string path_to_executable;
@@ -477,4 +595,12 @@ public class GameInfo {
     public string add_date;
     public List<Texture2D> screenshots = new List<Texture2D>();
 	public Color paper_color;
+    public int total_play_count = 0;
+    public int play_count_delta = 0;
+    public int playtime_sec_delta = 0;
+
+    public string GetPlayCountID()
+    {
+        return game_title + "_" + add_date + "_play_count";
+    }
 }
