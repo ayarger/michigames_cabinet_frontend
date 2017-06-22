@@ -249,10 +249,7 @@ public class GameManager : MonoBehaviour {
     void ConsiderSendingReport()
     {
         // Send report to server once we pass 11:45pm.
-        //if (DateTime.Now.TimeOfDay > new TimeSpan(23, 45, 0) && !sent_report)
-        //print(DateTime.Now.TimeOfDay);
-        //if (DateTime.Now.TimeOfDay > new TimeSpan(22, 13, 0) && !sent_report)
-        if (DateTime.Now.TimeOfDay > new TimeSpan(3, 41, 0) && !sent_report)
+        if (DateTime.Now.TimeOfDay > new TimeSpan(23, 45, 0) && !sent_report)
         {
             ReportToServer();
             sent_report = true;
