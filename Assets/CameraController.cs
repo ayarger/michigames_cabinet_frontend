@@ -38,7 +38,8 @@ public class CameraController : MonoBehaviour {
 	}
 
 	void ProcessConfirm() {
-		SelectableCell cell = GameManager.GetFocusedCell ();
+        return;
+        SelectableCell cell = GameManager.GetFocusedCell ();
 		transform.position += (GameManager.GetFocusedCell().initial_desired_position + -Vector3.forward * 5 - transform.position) * 0.1f;
 	}
 }

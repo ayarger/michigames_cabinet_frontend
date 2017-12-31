@@ -99,6 +99,8 @@ public class GameManager : MonoBehaviour {
         //Screen.SetResolution (1280, 768, true);
     }
 
+    int icon_number = 0;
+
     void AddGame(string path) {
         print ("Adding game at path: " + path);
         string config_path = path + "/config.json";
@@ -121,7 +123,9 @@ public class GameManager : MonoBehaviour {
         tex.LoadImage (data);
         tex.name = Path.GetFileNameWithoutExtension (icon_path);
         //new_game_info.icon = Sprite.Create (tex, new Rect (Vector2.zero, Vector2.one * 120), new Vector2 (0.5f, 0.5f));
-        new_game_info.icon = manually_prepared_icon_list[0];
+        UnityEngine.Debug.Log(icon_number);
+        icon_number = Mathf.Min(icon_number, 8);
+        new_game_info.icon = manually_prepared_icon_list[icon_number++];
 
         // Screenshots
         string[] screenshot_paths = Directory.GetFiles (screenshots_folder_path);
@@ -304,7 +308,7 @@ public class GameManager : MonoBehaviour {
 				return;
 			_state = SelectorState.CONFIRM;
 			StartCoroutine (short_rumble());
-			LaunchPanel.gameObject.SetActive (true);
+			//LaunchPanel.gameObject.SetActive (true);
 			if(cell.game_info.semester_or_event_code.Length == 3)
 				LaunchText1.text = "This game was created in EECS 494.";
 			else 
@@ -321,11 +325,11 @@ public class GameManager : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.Return) || InputManager.ActiveDevice.Action1.WasPressed) {
             _state = SelectorState.TRANSITION;
 			StartCoroutine (short_rumble());
-			LaunchPanel.gameObject.SetActive (false);
-			TransitionPanel.gameObject.SetActive (true);
+			//LaunchPanel.gameObject.SetActive (false);
+			//TransitionPanel.gameObject.SetActive (true);
 		} else if (Input.GetKeyDown (KeyCode.Backspace) || InputManager.ActiveDevice.Action2.WasPressed) {
             _state = SelectorState.GRID;
-			LaunchPanel.gameObject.SetActive (false);
+			//LaunchPanel.gameObject.SetActive (false);
         }
     }
 

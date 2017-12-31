@@ -50,36 +50,71 @@ public class ObjectIcon : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        transform.position = _cell_info.initial_desired_position - Vector3.up * (10.0f + UnityEngine.Random.Range(0.0f, 50.0f));
 		previous_time = Time.time;
 		SetTexture(_cell_info.game_info.icon);
-		transform.position = _cell_info.initial_desired_position;
 		RemixDesiredPosition ();
 	}
+
+    float scale_velocity = 0.0f;
 
 	// Update is called once per frame
 	void Update () {
 		ProcessMovement();
+
+        Vector3 desired_forward = Vector3.forward;
+        Vector3 desired_scale = Vector3.one;
+
 		if (_cell_info.is_selected) {
 			//if (was_selected_last_frame == false)
 			//	my_renderer.sortingOrder = ++top_most_sorting_level;
 
 			was_selected_last_frame = true;
-			transform.localScale += (Vector3.one * (1.75f + Mathf.Abs(Mathf.Sin(Time.time * 5.0f) * 0.1f)) - transform.localScale) * 0.2f;
+            desired_forward = Vector3.forward + Vector3.right * Mathf.Sin(Time.time * 2.0f) * 0.5f;
+            desired_scale = Vector3.one * (1.75f + Mathf.Abs(Mathf.Sin(Time.time * 5.0f) * 0.1f));
+            
 			transform.SetAsFirstSibling ();
 			selected_icon = this;
 		} else {
+            transform.forward = Vector3.forward;
 
-			was_selected_last_frame = false;
+            was_selected_last_frame = false;
 			transform.localScale += (Vector3.one - transform.localScale) * 0.2f;
 		}
-	}
 
-	void ProcessMovement() {
+        // Local Scale Bounce
+        float x = desired_scale.x - transform.localScale.x;
+        float k = 0.5f;
+        float f = k * x;
+
+        scale_velocity += f;
+        scale_velocity *= 0.7f;
+        transform.localScale += Vector3.one * scale_velocity;
+
+         //transform.localScale += (desired_scale - transform.localScale) * 0.2f;
+        transform.forward = Vector3.Slerp(transform.forward, desired_forward, 0.1f);
+    }
+
+    void UpdateScale()
+    {
+
+        /*float x = normal_scale.x - rt.localScale.x;
+        float k = 0.5f;
+        float f = k * x;
+
+        velocity += f;
+        velocity *= 0.7f;
+        rt.localScale += Vector3.one * velocity;*/
+
+        //rt.localScale = Vector3.Lerp(rt.localScale, normal_scale, 0.25f * Application.targetFrameRate * Time.deltaTime);
+    }
+
+    void ProcessMovement() {
 		if (GameManager.GetSelectorState () != SelectorState.GRID) {
 			if(!_cell_info.is_selected) {
-				ConfirmMovement ();
+                NormalMovement();
 			} else {
-				NormalMovement();
+                SelectedMovement();
 			}
 		} else {
 			NormalMovement();
@@ -87,13 +122,21 @@ public class ObjectIcon : MonoBehaviour {
 	}
 
 	void NormalMovement() {
-        transform.position = _cell_info.initial_desired_position;
+
+        Vector3 desired_position = _cell_info.initial_desired_position;
+        transform.position += (desired_position - transform.position) * 0.1f;
 	}
+
+    void SelectedMovement()
+    {
+        Vector3 desired_position = Camera.main.transform.position + Vector3.forward * 5 - Vector3.right * 1;
+        transform.position += (desired_position - transform.position) * 0.1f;
+    }
 
 	void ConfirmMovement() {
 		SelectableCell selected_cell = GameManager.GetFocusedCell ();
 		Vector3 delta = _cell_info.initial_desired_position - selected_cell.initial_desired_position;
 		Vector3 new_desired_position = selected_cell.initial_desired_position + delta * 2.0f;
 		transform.position = new_desired_position + Vector3.up * Mathf.Sin (Time.time * 2 + _cell_info.initial_desired_position.x) * 0.1f;
-	}
+    }
 }
