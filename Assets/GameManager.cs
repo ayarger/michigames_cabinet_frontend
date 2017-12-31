@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviour {
     public GameObject credits_paper;
     public List<Image> player_number_images = new List<Image>();
 
+    public List<Sprite> manually_prepared_icon_list = new List<Sprite>(); 
+
     public AudioClip boop;
 
     public Vector3 grid_offset = Vector3.zero;
@@ -93,7 +95,8 @@ public class GameManager : MonoBehaviour {
 
         print (Directory.GetCurrentDirectory());
 
-        Screen.SetResolution (1280, 768, true);
+        Screen.SetResolution(1920, 1080, true);
+        //Screen.SetResolution (1280, 768, true);
     }
 
     void AddGame(string path) {
@@ -114,10 +117,11 @@ public class GameManager : MonoBehaviour {
 
         // Icon
         byte[] data = File.ReadAllBytes (icon_path);
-        Texture2D tex = new Texture2D (120, 120, TextureFormat.ARGB32, false);
+        Texture2D tex = new Texture2D (120, 120, TextureFormat.ARGB4444, true);
         tex.LoadImage (data);
         tex.name = Path.GetFileNameWithoutExtension (icon_path);
-        new_game_info.icon = Sprite.Create (tex, new Rect (Vector2.zero, Vector2.one * 120), new Vector2 (0.5f, 0.5f));
+        //new_game_info.icon = Sprite.Create (tex, new Rect (Vector2.zero, Vector2.one * 120), new Vector2 (0.5f, 0.5f));
+        new_game_info.icon = manually_prepared_icon_list[0];
 
         // Screenshots
         string[] screenshot_paths = Directory.GetFiles (screenshots_folder_path);
@@ -132,7 +136,7 @@ public class GameManager : MonoBehaviour {
             //new_game_info.icon = Sprite.Create (screen_tex, new Rect (Vector2.zero, new Vector2 (384, 240)), Vector2.zero);
             new_game_info.screenshots.Add(screen_tex);
         }
-        print(screenshot_paths.Length);
+
         new_game_info.game_id = root ["game_id"];
         new_game_info.logline = root ["logline"];
         new_game_info.max_number_players = root["max_number_players"].AsInt;

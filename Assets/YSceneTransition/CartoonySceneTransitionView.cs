@@ -14,7 +14,7 @@ public class CartoonySceneTransitionView : TransitionView {
 
 	// Use this for initialization
 	void Awake () {
-		mat = new Material( Shader.Find("Hidden/CartoonySceneTransitionView") );
+		//mat = new Material( Shader.Find("Hidden/CartoonySceneTransitionView") );
 	}
 
 	public override void TransitionViewStart () {

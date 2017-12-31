@@ -24,7 +24,7 @@ namespace InControl
 #if UNITY_5
 			if (buildTarget == BuildTarget.iOS)
 #else
-			if (buildTarget == BuildTarget.iPhone)
+			if (buildTarget == BuildTarget.iOS)
 #endif
 			{
 				var projPath = PBXProject.GetPBXProjectPath( buildPath );
