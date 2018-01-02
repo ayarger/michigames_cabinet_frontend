@@ -32,6 +32,8 @@ public class GameManager : MonoBehaviour {
         return Mathf.Clamp01 (_instance.transition_progress);
     }
 
+    public Camera main_camera;
+
     public List<GameInfo> game_infos = new List<GameInfo>();
 
     List<List<SelectableCell>> cells = new List<List<SelectableCell>>();
@@ -47,9 +49,15 @@ public class GameManager : MonoBehaviour {
     public GameObject credits_paper;
     public List<Image> player_number_images = new List<Image>();
 
+    public Image white_board;
+
     public List<Sprite> manually_prepared_icon_list = new List<Sprite>(); 
 
     public AudioClip boop;
+
+    public AudioClip select_clip;
+    public AudioClip deselect_clip;
+    public AudioClip confirm_clip;
 
     public Vector3 grid_offset = Vector3.zero;
     public float icon_margin = 1.0f;
@@ -208,6 +216,7 @@ public class GameManager : MonoBehaviour {
             cell.game_info = game_infos [i];
             cell.ob = Instantiate (object_icon_prefab, Vector3.zero, Quaternion.identity) as GameObject;
             cell.ob.GetComponent<ObjectIcon> ().SetSelectableCell (cell);
+            cell.ob.GetComponent<ObjectIcon>().main_camera = main_camera;
             cell.initial_desired_position = new Vector3 (x * icon_margin + grid_offset.x, y * icon_margin +grid_offset.y, 0+grid_offset.z);
             new_list.Add (cell);
         }
@@ -250,6 +259,15 @@ public class GameManager : MonoBehaviour {
             ProcessIdling ();
 
         var inputDevice = InputManager.ActiveDevice;
+
+        white_board.color = new Color(1, 1, 1, transition_progress);
+
+        if (GetSelectorState() == SelectorState.GRID || GetSelectorState() == SelectorState.CONFIRM)
+        {
+            
+            if (transition_progress > 0)
+                transition_progress -= 0.02f;
+        }
 
         playtime += Time.time;
     }
@@ -308,8 +326,9 @@ public class GameManager : MonoBehaviour {
 				return;
 			_state = SelectorState.CONFIRM;
 			StartCoroutine (short_rumble());
-			//LaunchPanel.gameObject.SetActive (true);
-			if(cell.game_info.semester_or_event_code.Length == 3)
+            AudioSource.PlayClipAtPoint(select_clip, main_camera.transform.position);
+            //LaunchPanel.gameObject.SetActive (true);
+            if (cell.game_info.semester_or_event_code.Length == 3)
 				LaunchText1.text = "This game was created in EECS 494.";
 			else 
 				LaunchText1.text = "This game was created at a Wolverine Soft Game Jam in 48 Hours.";
@@ -324,16 +343,23 @@ public class GameManager : MonoBehaviour {
     void ProcessConfirm () {
 		if (Input.GetKeyDown (KeyCode.Return) || InputManager.ActiveDevice.Action1.WasPressed) {
             _state = SelectorState.TRANSITION;
+            normal_paper.SetActive(false);
+            AudioSource.PlayClipAtPoint(confirm_clip, main_camera.transform.position);
 			StartCoroutine (short_rumble());
 			//LaunchPanel.gameObject.SetActive (false);
 			//TransitionPanel.gameObject.SetActive (true);
 		} else if (Input.GetKeyDown (KeyCode.Backspace) || InputManager.ActiveDevice.Action2.WasPressed) {
             _state = SelectorState.GRID;
-			//LaunchPanel.gameObject.SetActive (false);
+            AudioSource.PlayClipAtPoint(deselect_clip, main_camera.transform.position);
+            //LaunchPanel.gameObject.SetActive (false);
         }
     }
 
     void ProcessTransition() {
+
+        Vector3 desired_cam_position = GetFocusedCell().ob.transform.position - Vector3.forward * (8 - (transition_progress * 6));
+        main_camera.transform.position += (desired_cam_position - main_camera.transform.position) * 0.1f;
+
         if (transition_progress >= 1.0f) {
             if (!IsGameRunning()) {
                 //WatchdogManager.WatchdogCheckin ();
@@ -342,7 +368,7 @@ public class GameManager : MonoBehaviour {
                 
             }
         } else {
-			transition_progress += 0.01f * Time.deltaTime * 50;
+			transition_progress += 0.0075f * Time.deltaTime * 50;
         }
     }
 
@@ -353,16 +379,17 @@ public class GameManager : MonoBehaviour {
 		if (_game_process.HasExited) {
 			//_game_process.Kill ();
 			ReturnToSelector ();
-		}
+            
+        }
         //}
     }
 
     void ReturnToSelector() {
+        normal_paper.SetActive(true);
         print ("RETURNING TO SELECTOR!");
         cells[(int)current_cursor.y][(int)current_cursor.x].game_info.playtime_sec_delta += (int)(playtime / 1000);
         playtime = 0.0f;
         _state = SelectorState.GRID;
-		transition_progress = 0.0f;
     }
 
     public void MoveCursor(int x, int y) {
@@ -382,7 +409,7 @@ public class GameManager : MonoBehaviour {
         if (cells [(int)(current_cursor.y + y)] [(int)(current_cursor.x + x)] == null)
             return;
 
-		AudioSource.PlayClipAtPoint (boop, Camera.main.transform.position);
+		AudioSource.PlayClipAtPoint (boop, main_camera.transform.position);
 
         ResetCells ();
         current_cursor += new Vector2 (x, y);
@@ -426,14 +453,18 @@ public class GameManager : MonoBehaviour {
             event_icon.GetComponent<RectTransform>().sizeDelta = new Vector2(40, 40);
         }
 
-        if(cell.game_info.game_title == "Credits")
+        if (GetSelectorState() != SelectorState.TRANSITION && GetSelectorState() != SelectorState.IDLING)
         {
-            normal_paper.SetActive(false);
-            credits_paper.SetActive(true);
-        } else
-        {
-            normal_paper.SetActive(true);
-            credits_paper.SetActive(false);
+            if (cell.game_info.game_title == "Credits")
+            {
+                normal_paper.SetActive(false);
+                credits_paper.SetActive(true);
+            }
+            else
+            {
+                normal_paper.SetActive(true);
+                credits_paper.SetActive(false);
+            }
         }
 
 		normal_paper.GetComponent<Image> ().color = cell.game_info.paper_color;

@@ -16,6 +16,8 @@ public class ObjectIcon : MonoBehaviour {
 
 	public static int top_most_sorting_level = 10000;
 
+    public Camera main_camera;
+
 	public Renderer icon_renderer;
 
 	bool was_selected_last_frame = false;
@@ -32,7 +34,7 @@ public class ObjectIcon : MonoBehaviour {
 
 	public void RemixDesiredPosition() {
 		time_duration = UnityEngine.Random.Range (0.5f, 3.0f);
-		desired_position = _cell_info.initial_desired_position + UnityEngine.Random.onUnitSphere * 0.1f;
+		desired_position = _cell_info.initial_desired_position - Vector3.up * (10 + _cell_info.initial_desired_position.y * 20 + _cell_info.initial_desired_position.x * 4);
 	}
 
     void SetTexture(Sprite s)
@@ -50,10 +52,10 @@ public class ObjectIcon : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        transform.position = _cell_info.initial_desired_position - Vector3.up * (10.0f + UnityEngine.Random.Range(0.0f, 50.0f));
-		previous_time = Time.time;
+        transform.position = _cell_info.initial_desired_position + Vector3.up * (10 + _cell_info.initial_desired_position.y * 20 + _cell_info.initial_desired_position.x * 8);
+        previous_time = Time.time;
 		SetTexture(_cell_info.game_info.icon);
-		RemixDesiredPosition ();
+		//RemixDesiredPosition ();
 	}
 
     float scale_velocity = 0.0f;
@@ -89,7 +91,8 @@ public class ObjectIcon : MonoBehaviour {
 
         scale_velocity += f;
         scale_velocity *= 0.7f;
-        transform.localScale += Vector3.one * scale_velocity;
+        if(GameManager.GetSelectorState() != SelectorState.CONFIRM)
+            transform.localScale += Vector3.one * scale_velocity;
 
          //transform.localScale += (desired_scale - transform.localScale) * 0.2f;
         transform.forward = Vector3.Slerp(transform.forward, desired_forward, 0.1f);
@@ -126,11 +129,12 @@ public class ObjectIcon : MonoBehaviour {
         Vector3 desired_position = _cell_info.initial_desired_position;
         transform.position += (desired_position - transform.position) * 0.1f;
 	}
-
+     
     void SelectedMovement()
     {
-        Vector3 desired_position = Camera.main.transform.position + Vector3.forward * 5 - Vector3.right * 1;
-        transform.position += (desired_position - transform.position) * 0.1f;
+        Vector3 desired_position = main_camera.transform.position + Vector3.forward * 8 - Vector3.right * 2.5f + Vector3.up;
+        if(GameManager.GetSelectorState() != SelectorState.TRANSITION)
+            transform.position += (desired_position - transform.position) * 0.1f;
     }
 
 	void ConfirmMovement() {
