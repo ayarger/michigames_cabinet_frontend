@@ -52,7 +52,7 @@
 			{
 				if (Application.platform == RuntimePlatform.OSXEditor ||
 					Application.platform == RuntimePlatform.OSXPlayer ||
-					Application.platform == RuntimePlatform.OSXDashboardPlayer
+					false
 #if !UNITY_5_4_OR_NEWER
 					|| Application.platform == RuntimePlatform.OSXWebPlayer
 #endif
