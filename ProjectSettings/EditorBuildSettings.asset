@@ -6,8 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/m_game_selector.unity
+    path: Assets/cabinet_frontend/scenes/m_game_selector.unity
     guid: a4afb737774faee48a5d4937c3fdd86c
-  - enabled: 1
-    path: Assets/LAB_sprite_to_mesh.unity
-    guid: 197376e0b4ad77143b2a08fce6851bd1
+  m_configObjects: {}
