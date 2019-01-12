@@ -1,7 +1,7 @@
 # michigames_cabinet_frontend
 Frontend game-selection software for the MichiGames Arcade Cabinet.
 
-![Gif Demonstration](https://j.gifs.com/9QRGwx.gif)
+![Gif Demonstration](cabinet_demo.gif)
 
 # Usage
 Students traditionally submit information via a lotcheck process like this (https://goo.gl/forms/vdco73yz5aIV86nb2).
