@@ -14,7 +14,11 @@ The executable will expect to find a directory titled "michigames_games_repo" ne
 * config.json
 
 ## Example
+### First Level of "michigames_games_repo" Data Directory
 ![First-Level of repo](https://i.imgur.com/kC8rrhW.png)
+### Second Level of Data Directory
 ![Second-Level of repo](https://i.imgur.com/GDmz84l.png)
+### Game Screenshots Directory
 ![Screenshots](https://i.imgur.com/qEkcaiB.png)
+### config.json Contents
 ![config.json contents](https://i.imgur.com/u9YQlD6.png)
